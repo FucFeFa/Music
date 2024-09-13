@@ -11,7 +11,7 @@ app.use(session({
     secret: secretKey,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }  // Set secure to true for HTTPS only
+    cookie: { secure: true }  // Set secure to true for HTTPS only
 }))
 
 // Import các router
