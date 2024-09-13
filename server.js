@@ -11,7 +11,7 @@ app.use(session({
     secret: secretKey,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }  // Set secure to true for HTTPS only
+    cookie: { secure: false }  // Set secure to true for HTTPS only
 }))
 
 // Import các router
@@ -19,7 +19,6 @@ const authRoutes = require('./routes/authRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Sử dụng các router
