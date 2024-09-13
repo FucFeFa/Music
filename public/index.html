@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="icon" href="./asset/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./asset/css/style.css">
+</head>
+<body>
+    <div id="header">
+        <div id="navigation">
+            <ul id="nav-list">
+                <li class="nav-home icon">
+                    <i class="fa-solid fa-house"></i>
+                </li>
+                
+                <li class="nav-search">
+                    <i class="fa-solid fa-magnifying-glass search-icon icon"></i>
+                    <input type="text">
+                    <i class="fa-solid fa-check submit-icon icon"></i>
+                </li>
+
+                <li class="nav-signup">
+                    Sign up
+                </li>
+                <li class="nav-signin">
+                    Sign in
+                </li>
+
+                <li class="nav-user">
+                    <img id="user-avt">
+                    <ul class="user-list-information">
+                        <li>
+                            <p class="tag-list">Profile</p> 
+                            <i class="fa-solid fa-user tag-list-icon"></i>
+                        </li>
+                        
+                        <li>
+                            <p class="tag-list">Setting</p>
+                            <i class="fa-solid fa-gear tag-list-icon"></i>
+                        </li>
+
+                        <hr style="opacity: 0.4;">
+
+                        <li>
+                            <p class="tag-list">Log out</p>
+                            <i class="fa-solid fa-right-from-bracket tag-list-icon"></i>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <div id="playlist-container">
+            <div class="playlist">
+                <div class="playlist-header">
+                    <div class="playlist-header-left">
+                        <i class="bi bi-music-note-list"></i> 
+                        <span style="margin-left: 8px;">Your Library</span>
+                    </div>
+
+                    <div class="playlist-header-right">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                </div>
+
+                <div class="playlist-content">
+                    <h4>Create your first playlist</h4>
+                    <p>It's easy, we'll help you</p>
+                    <button class="btn">Create playlist</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="recommend-container">
+            <div class="recommend">
+                <div class="recommend-artists">
+                    <div class="recommend-header">
+                        <h2 class="title">Popular artists</h2>
+                        <span class="show-all">Show all</span>
+                    </div>
+
+                    <div>
+                        <div class="artist-container">
+                            <!-- <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 1</h3>
+                            </div>
+                            <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 2</h3>
+                            </div>
+
+                            <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 3</h3>
+                            </div>
+
+                            <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 4</h3>
+                            </div>
+
+                            <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 5</h3>
+                            </div>
+
+                            <div class="artists">
+                                <img class="artist-avt" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Artist 1">
+                                <h3 class="name">Artist 6</h3>
+                            </div> -->
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommend-playlist">
+                <div class="recommend-header">
+                    <h2 class="title">Popular playlists</h2>
+                    <span class="show-all">Show all</span>
+                </div>
+
+                <div>
+                    <div class="playlist-container">
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 1</h3>
+                        </div>
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 2</h3>
+                        </div>
+
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 3</h3>
+                        </div>
+
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 4</h3>
+                        </div>
+
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 5</h3>
+                        </div>
+
+                        <div class="playlists">
+                            <img class="playlist-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="playlist 1">
+                            <h3 class="name">playlist 6</h3>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="recommend-song">
+            <div class="recommend-header">
+                <h2 class="title">Popular songs</h2>
+                <span class="show-all">Show all</span>
+            </div>
+
+            <div>
+                <div class="song-container">
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 1</h3>
+                    </div>
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 2</h3>
+                    </div>
+
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 3</h3>
+                    </div>
+
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 4</h3>
+                    </div>
+
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 5</h3>
+                    </div>
+
+                    <div class="songs">
+                        <img class="song-thumb" src="./asset/img/artworks-1ucaBWENwzSv6CyR-kPBfTg-t500x500.jpg" alt="Song 1">
+                        <h3 class="name">Song 6</h3>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+
+    </div>
+
+    
+
+    <script src="./js/app.js"></script>
+    <script src="./js/event.js"></script>
+</body>
+</html>

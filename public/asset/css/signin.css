@@ -1,0 +1,81 @@
+body {
+    margin: 0;
+    /* height: 1000px; */
+    font-family: sans-serif;
+    background-color: #121212;
+}
+
+#container {
+    position: relative;
+    color: #fff;
+    width: 349px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 49px;
+    text-align: center;
+}
+
+#signin-form {
+    /* margin: 0 30px; */
+    line-height: 36px;
+}
+
+label[for="username"],
+label[for="password"] {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#signin-form input[type="text"],
+#signin-form input[type="password"]{
+    width: 96%;
+    height: 32px;
+    padding: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #fff;
+    background-color: #121212;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    outline: none;
+}
+
+#signin-form button[type="submit"] {
+    width: 100%;
+    height: 54px;
+    padding: 6px;
+    margin-top: 16px;
+    background-color: #f5595c;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    outline: none;
+}
+
+hr {
+    width: 349px;
+    opacity: 0.5;
+    margin-top: 32px;
+}
+
+#footer {
+    width: 349px;
+    margin: 0 auto;
+    text-align: center;
+    color: #b3b3b3;
+    margin-top: 32px;
+}
+
+a {
+    color: #fff;
+}
+
+#alert {
+    color: #f3727f;
+}
