@@ -559,7 +559,7 @@ h4, p {
 }
 
 #progress {
-    -webkit-appearance: none;
+    --webkit-appearance: none;
     border-radius: 5px;
     height: 4px;
     background: #ddd;
@@ -568,9 +568,11 @@ h4, p {
 
 #progress::-webkit-slider-thumb {
     -webkit-appearance: none;
+    appearance: none;
     background: #f5595c;
     border-radius: 50%;
     cursor: pointer;
     width: 14px;
     height: 14px;
 }
+
