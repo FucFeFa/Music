@@ -219,6 +219,21 @@ var app = {
 
         truncateText(playlistTitle, 21)
         truncateText(playlistAbout, 21)
+
+        //Chinh sua chieu cao content
+        const windowHeight = window.innerHeight;
+        fitHeight = windowHeight - 71
+        playlistContainer.style.height = `${fitHeight}px`
+        recommendContainer.style.height = `${fitHeight}px`
+        console.log(windowHeight); // Xuất chiều cao của thiết bị ra console
+        
+        window.addEventListener('resize', () => {
+            console.log('Kích thước cửa sổ đã thay đổi!');
+            const newHeight = window.innerHeight - 76;
+            playlistContainer.style.height = `${newHeight}px`
+            recommendContainer.style.height = `${newHeight}px`
+        });
+        
     },
 
     start() {
@@ -228,11 +243,7 @@ var app = {
         this.interfaceHandler()
         this.eventHandler()
 
-        const windowHeight = window.innerHeight;
-        fitHeight = windowHeight - 71
-        playlistContainer.style.height = `${fitHeight}px`
-        recommendContainer.style.height = `${fitHeight}px`
-        console.log(windowHeight); // Xuất chiều cao của thiết bị ra console
+        
 
     }
 }
