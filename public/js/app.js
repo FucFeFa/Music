@@ -111,7 +111,7 @@ var app = {
                                     <img src="${playlist.playlist_thumb}" alt="">
                                     <div class="playlist-info">
                                         <p class="playlist-title">${playlist.playlist_name}</p>
-                                        <p class="playlist-about">Playlist <i class="bi bi-dot icon"></i> ${user.user_fullname}</p>
+                                        <p class="playlist-about">Playlist<i class="bi bi-dot dot-icon"></i>${user.user_fullname}</p>
                                     </div>
                                 </div>
                             `
