@@ -596,3 +596,7 @@ h4, p {
     transform: scale(1.05);
     filter: brightness(0.8);
 }
+
+.btn-active {
+    color: #f5595c;
+}

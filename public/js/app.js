@@ -26,6 +26,8 @@ var app = {
     playlistsRecommend: [],
     songActive: false,
     isPlaying: false,
+    isRepeat: false,
+    isRandom: false,
     async fetchAuthors() {
         try {
             const response = await fetch('/data/authors')
@@ -347,6 +349,7 @@ var app = {
         const iconPause = $('.icon-pause')
         const currentTime = $('.current-time')
         const totalTime = $('.total-time')
+        const repeatBtn = $('.btn-repeat')
         
         this.isPlaying = true
         iconPause.style.display = 'block'
@@ -377,7 +380,7 @@ var app = {
                 var seconds = Math.floor((audio.duration / 60 - minutes)*60)
                 var currentMinutes = Math.floor(audio.currentTime/60)
                 var currentSeconds = Math.floor((audio.currentTime / 60 - currentMinutes)*60)
-                console.log(minutes, seconds)
+                // console.log(minutes, seconds)
                 currentTime.textContent = currentMinutes+':'+currentSeconds.toString().padStart(2, '0')
                 totalTime.textContent = minutes + ':' + seconds.toString().padStart(2, '0')
             }
@@ -388,6 +391,24 @@ var app = {
         progress.oninput = function(e) {
             const seekTime = e.target.value
             audio.currentTime = seekTime / 100 * audio.duration
+        }
+
+
+        //Khi bam vao nut repeat
+        repeatBtn.onclick = function() {
+            if(this.isRepeat) {
+                this.isRepeat = false
+                repeatBtn.classList.remove('btn-active')
+                
+            } else {
+                // this.isRandom = false
+                // randomBtn.classList.remove('btn-active')
+                this.isRepeat = true
+                repeatBtn.classList.add('btn-active')
+                audio.onended = function() {
+                    audio.play()
+                }
+            }
         }
     },
 
