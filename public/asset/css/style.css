@@ -557,3 +557,20 @@ h4, p {
 .duration > input {
     width: 60%;
 }
+
+#progress {
+    -webkit-appearance: none;
+    border-radius: 5px;
+    height: 4px;
+    background: #ddd;
+    outline: none;
+}
+
+#progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: #f5595c;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
