@@ -75,6 +75,7 @@ router.get('/song/:songId', function(req, res) {
     db('songs')
        .select('*')
        .where('song_id', songId)
+       .join('authors', 'songs.author_id', 'authors.author_id')
        .then(song => {
             res.json(song);
         })

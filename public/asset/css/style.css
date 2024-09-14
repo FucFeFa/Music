@@ -529,7 +529,14 @@ h4, p {
 }
 
 .icon-pause {
+    width: 16px;
+    height: 16px;
     display: none;
+    color: black;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 50%;
+    text-align: center;
 }
 
 .icon-play {
@@ -550,8 +557,16 @@ h4, p {
 
 .duration {
     /* height: 29px; */
+    display: flex;
     height: 50%;
-    text-align: center;
+    /* text-align: center; */
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.duration > span {
+    margin: 0;
 }
 
 .duration > input {
@@ -567,7 +582,7 @@ h4, p {
 }
 
 #progress::-webkit-slider-thumb {
-    -webkit-appearance: none;
+    --webkit-appearance: none;
     appearance: none;
     background: #f5595c;
     border-radius: 50%;
@@ -576,3 +591,8 @@ h4, p {
     height: 14px;
 }
 
+.controll-btn:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+    filter: brightness(0.8);
+}

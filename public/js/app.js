@@ -15,6 +15,8 @@ const playlistContentContainer = $('.playlist-content-container')
 const playlistContainer = $('#playlist-container')
 const recommendContainer = $('#recommend-container')
 const footer = $('#footer')
+const footerContainer = $('#footer-container')
+
 
 const yourPlaylist = $$('.your-playlist')
 
@@ -23,6 +25,7 @@ var app = {
     songs: [],
     playlistsRecommend: [],
     songActive: false,
+    isPlaying: false,
     async fetchAuthors() {
         try {
             const response = await fetch('/data/authors')
@@ -106,15 +109,63 @@ var app = {
                 })
                 .then((data) => {
                     console.log(data[0].song_thumb)
+                    htmls = `
+                        <div class="song-playing-info">
+                            <img src="${data[0].song_thumb}" class="song-playing-thumb" alt="">
+                            <div class="song-playing-detail">
+                                <h3 class="song-playing-name">${data[0].song_title}</h3>
+                                <p class="song-playing-artist">${data[0].author_name}</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard">
+                            <div class="controll">
+                                <div class="controll-btn btn-repeat">
+                                    <i class="fas fa-redo"></i>
+                                </div>
+
+                                <div class="controll-btn btn-prev">
+                                    <i class="fas fa-step-backward"></i>
+                                </div>
+
+                                <div class="controll-btn btn-toggle-play">
+                                    <i class="fas fa-pause icon-pause"></i>
+                                    <i class="fas fa-play icon-play"></i>
+                                </div>
+
+                                <div class="controll-btn btn-next">
+                                    <i class="fas fa-step-forward"></i>
+                                </div>
+                                
+                                <div class="controll-btn btn-random">
+                                    <i class="fas fa-random"></i>
+                                </div>
+
+                            </div>
+
+                            <div class="duration">
+                                <span class="current-time"></span>
+                                <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
+                                <span class="total-time"></span>
+                            </div>
+
+                            <audio src="${data[0].song_sound}"></audio>
+                    `
+                    footerContainer.innerHTML = htmls
+
+                    this.playMusic()
+                    
                 })
                 .catch((error) => {
                     console.error('Error fetching song:', error);
                 })
 
-
+                //hien thi dashboard va chinh lai chieu cao trang web
                 footer.style.display = 'block';
                 this.songActive = true;
                 this.changeHeightContent();
+
+                
             })
         })   
         
@@ -227,7 +278,6 @@ var app = {
         })
 
         
-             
 
     },
 
@@ -286,6 +336,58 @@ var app = {
                 playlistContainer.style.height = `${newHeight}px`
                 recommendContainer.style.height = `${newHeight}px`
         });
+        }
+    },
+
+    playMusic() {
+        // Xu ly khi bam vao nut play
+        const playBtn = $('.btn-toggle-play')
+        const audio = $('audio')
+        const iconPlay = $('.icon-play')
+        const iconPause = $('.icon-pause')
+        const currentTime = $('.current-time')
+        const totalTime = $('.total-time')
+        
+        this.isPlaying = true
+        iconPause.style.display = 'block'
+        iconPlay.style.display = 'none'
+        audio.play()
+        playBtn.addEventListener('click', () => {
+            if(this.isPlaying) {
+                audio.pause()
+                this.isPlaying = false
+                iconPause.style.display = 'none'
+                iconPlay.style.display = 'block'
+            } else {
+                audio.play()
+                this.isPlaying = true
+                iconPause.style.display = 'block'
+                iconPlay.style.display = 'none'
+            }
+        })
+
+        //Khi tien do bai hat thay doi
+        audio.ontimeupdate = function() {
+            if(audio.duration) {
+                const progressPercent = Math.floor(audio.currentTime/audio.duration*100)
+                progress.value = progressPercent
+                
+                //Thoi luong bai hat
+                var minutes = Math.floor(audio.duration/60)
+                var seconds = Math.floor((audio.duration / 60 - minutes)*60)
+                var currentMinutes = Math.floor(audio.currentTime/60)
+                var currentSeconds = Math.floor((audio.currentTime / 60 - currentMinutes)*60)
+                console.log(minutes, seconds)
+                currentTime.textContent = currentMinutes+':'+currentSeconds.toString().padStart(2, '0')
+                totalTime.textContent = minutes + ':' + seconds.toString().padStart(2, '0')
+            }
+            
+        }
+
+        //Tua thoi luong bai hat
+        progress.oninput = function(e) {
+            const seekTime = e.target.value
+            audio.currentTime = seekTime / 100 * audio.duration
         }
     },
 
