@@ -108,7 +108,8 @@ var app = {
                         playlistContent.style.display = 'none'
                         htmls = playlists.map((playlist) => `
                                 <div class="your-playlists">
-                                    <img src="${playlist.playlist_thumb}" alt="">
+                                    <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="">
+                                    <i class="fa-solid fa-play playlist-play-btn"></i>
                                     <div class="playlist-info">
                                         <p class="playlist-title">${playlist.playlist_name}</p>
                                         <p class="playlist-about">Playlist - ${user.user_fullname}</p>
