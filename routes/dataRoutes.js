@@ -69,4 +69,16 @@ router.get('/session', async (req, res) => {
     }
 })
 
+//lay thong tin bai hat
+router.get('/song/:songId', function(req, res) {
+    const songId = req.params.songId;
+    db('songs')
+       .select('*')
+       .where('song_id', songId)
+       .then(song => {
+            res.json(song);
+        })
+       .catch(err => console.error(err));
+})
+
 module.exports = router;

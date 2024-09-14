@@ -14,14 +14,15 @@ const playlistContent = $('.playlist-content')
 const playlistContentContainer = $('.playlist-content-container')
 const playlistContainer = $('#playlist-container')
 const recommendContainer = $('#recommend-container')
+const footer = $('#footer')
 
 const yourPlaylist = $$('.your-playlist')
-
 
 var app = {
     authors: [],
     songs: [],
     playlistsRecommend: [],
+    songActive: false,
     async fetchAuthors() {
         try {
             const response = await fetch('/data/authors')
@@ -70,12 +71,14 @@ var app = {
 
     renderSongs() {
         const htmls = this.songs.map(song => `
-                <div class="songs">
+                <div class="songs" song-id=${song.song_id}>
                     <img class="song-thumb" src="${song.song_thumb}" alt="${song.song_title}">
                     <h3 class="name">${song.song_title}</h3>
                 </div>
             `)
         songContainer.innerHTML = htmls.join('')
+
+        this.songClickEvent()
     },
 
     renderPlaylistsRecommend(){
@@ -86,6 +89,34 @@ var app = {
                 </div>
             `)
         playlistContainerRecommend.innerHTML = htmls.join('')
+    },
+
+    songClickEvent() {
+        //Xu ly khi nguoi dung click vao bai hat
+        const songs = $$('.songs')
+        console.log(songs)
+        songs.forEach(song => {
+            song.addEventListener('click', (e) => {
+                // Hien thi bai hat khi click
+                const songId = song.getAttribute('song-id')
+                
+                fetch(`/data/song/${songId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data.song_title)
+                })
+                .catch((error) => {
+                    console.error('Error fetching song:', error);
+                })
+
+
+                footer.style.display = 'block';
+                this.songActive = true;
+                this.changeHeightContent();
+            })
+        })   
+        
+        
     },
 
     eventHandler() {
@@ -170,7 +201,7 @@ var app = {
 
         // Tạo menu chuột phải tùy chỉnh
         const customMenu = document.createElement('div');
-        // customMenu.classList.add('right-click-menu')
+        customMenu.style.display = 'none';
         customMenu.innerHTML = `
         <ul class="create-playlist-list">
             <li>Create playlist <i class="bi bi-plus-lg tag-list-icon"></i></li>
@@ -194,7 +225,7 @@ var app = {
         })
 
         
-
+             
 
     },
 
@@ -220,20 +251,40 @@ var app = {
         truncateText(playlistTitle, 21)
         truncateText(playlistAbout, 21)
 
-        //Chinh sua chieu cao content
-        const windowHeight = window.innerHeight;
-        fitHeight = windowHeight - 71
-        playlistContainer.style.height = `${fitHeight}px`
-        recommendContainer.style.height = `${fitHeight}px`
-        console.log(windowHeight); // Xuất chiều cao của thiết bị ra console
+        this.changeHeightContent()
         
-        window.addEventListener('resize', () => {
-            console.log('Kích thước cửa sổ đã thay đổi!');
-            const newHeight = window.innerHeight - 76;
-            playlistContainer.style.height = `${newHeight}px`
-            recommendContainer.style.height = `${newHeight}px`
+    },
+
+    changeHeightContent() {
+        if(this.songActive) {
+            //Chinh sua chieu cao content
+            const windowHeight = window.innerHeight;
+            fitHeight = windowHeight - (76 + 62)
+            playlistContainer.style.height = `${fitHeight}px`
+            recommendContainer.style.height = `${fitHeight}px`
+            console.log(windowHeight);
+            
+            window.addEventListener('resize', () => {
+                console.log('Kích thước cửa sổ đã thay đổi!');
+                const newHeight = window.innerHeight - (76 + 62);
+                playlistContainer.style.height = `${newHeight}px`
+                recommendContainer.style.height = `${newHeight}px`
         });
-        
+        } else {
+            //Chinh sua chieu cao content
+            const windowHeight = window.innerHeight;
+            fitHeight = windowHeight - 76
+            playlistContainer.style.height = `${fitHeight}px`
+            recommendContainer.style.height = `${fitHeight}px`
+            console.log(windowHeight);
+            
+            window.addEventListener('resize', () => {
+                console.log('Kích thước cửa sổ đã thay đổi!');
+                const newHeight = window.innerHeight - 76;
+                playlistContainer.style.height = `${newHeight}px`
+                recommendContainer.style.height = `${newHeight}px`
+        });
+        }
     },
 
     start() {
@@ -243,7 +294,8 @@ var app = {
         this.interfaceHandler()
         this.eventHandler()
 
-        
+
+
 
     }
 }
