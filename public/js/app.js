@@ -13,6 +13,7 @@ const logOut = $('#log-out')
 const playlistContent = $('.playlist-content')
 const playlistContentContainer = $('.playlist-content-container')
 const playlistContainer = $('#playlist-container')
+const recommendContainer = $('#recommend-container')
 
 const yourPlaylist = $$('.your-playlist')
 
@@ -167,11 +168,34 @@ var app = {
             });
         }
 
+        // Tạo menu chuột phải tùy chỉnh
+        const customMenu = document.createElement('div');
+        // customMenu.classList.add('right-click-menu')
+        customMenu.innerHTML = `
+        <ul class="create-playlist-list">
+            <li>Create playlist <i class="bi bi-plus-lg tag-list-icon"></i></li>
+        </ul>`;
+        document.body.appendChild(customMenu);
+
         //Xu ly khi nguoi dung click chuot phai vao playlists
         playlistContainer.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             
+            customMenu.classList.add('active-playlist-menu');
+            customMenu.style.left = `${e.clientX}px`;
+            customMenu.style.top = `${e.clientY}px`;
+            customMenu.style.display = 'block';
         })
+
+        // Xu ly khi nguoi dung click vào menu chuột phải
+        document.addEventListener('click', (e) => {
+            e.preventDefault();
+            customMenu.style.display = 'none';
+        })
+
+        
+
+
     },
 
     interfaceHandler() {
@@ -205,6 +229,9 @@ var app = {
         this.eventHandler()
 
         const windowHeight = window.innerHeight;
+        fitHeight = windowHeight - 71
+        playlistContainer.style.height = `${fitHeight}px`
+        recommendContainer.style.height = `${fitHeight}px`
         console.log(windowHeight); // Xuất chiều cao của thiết bị ra console
 
     }

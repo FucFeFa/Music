@@ -91,6 +91,38 @@ body {
     box-shadow: 0px 8px 16px 0px rgba(166, 164, 164, 0.1);
 }
 
+.create-playlist-list {
+    padding: 0;
+    /* height: 30px; */
+}
+
+.create-playlist-list > li {
+    display: flex;
+    padding: 10px;
+}
+
+.create-playlist-list > li:hover {
+    cursor: default;
+    background-color: rgb(41, 41, 41);
+    border-radius: 8px;
+}
+
+.active-playlist-menu {
+    display: block;
+    position: absolute;
+    width: 188px;
+    color: #fff;
+    list-style-type: none;
+    right: 8px;
+    background-color: rgb(55 54 54);
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(166, 164, 164, 0.1);
+}
+
+.active-playlist-menu > ul {
+    margin: 6px;
+}
+
 .user-list-information > li {
     display: flex;
     padding: 10px;
@@ -112,6 +144,12 @@ body {
 
 /* .search-icon {
     width: 10%;
+} */
+
+/* .svg-icon {
+    width: 16px;
+    height: 16px;
+    color: #fff;
 } */
 
 .submit-icon {
@@ -170,6 +208,11 @@ input {
     margin-top: calc(47px + 10px);
     justify-content: space-between;
     padding: 0 10px;
+}
+
+.right-click-menu {
+    display: none;
+    position: absolute;
 }
 
 .your-playlists {
