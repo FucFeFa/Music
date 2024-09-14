@@ -28,7 +28,7 @@ router.get('/playlists', (req, res) => {
     db('playlists')
     .join('playlist_songs', 'playlists.playlist_id', 'playlist_songs.playlist_id')
     .join('songs', 'playlist_songs.song_id', 'songs.song_id')
-    .select('playlists.playlist_id', 'playlists.playlist_name', 'songs.song_thumb')
+    .select('playlists.playlist_id', 'playlists.playlist_name', 'playlists.playlist_thumb', 'playlists.user_id')
     .groupBy('playlists.playlist_id', 'playlists.playlist_name')
     .orderBy('playlist_rate', 'desc')
     .limit(6)
@@ -47,9 +47,22 @@ router.get('/users', (req, res) => {
 })
 
 //Get data from user
-router.get('/session', (req, res) => {
+router.get('/session', async (req, res) => {
     if(req.session.user) {
-        res.json(req.session.user);
+        try{
+            const user = req.session.user
+            const playlists =  await db('playlists')
+            .select('*')
+            .where({user_id: user.user_id})
+            res.json({
+                user, 
+                playlists
+            });
+        }
+        catch(error){
+            console.error(error)
+            res.status(500).send('Internal Server Error')
+        }
     } else {
         // Thông báo yêu cầu đăng nhập
         res.send('Please log in');

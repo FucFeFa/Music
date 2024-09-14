@@ -10,6 +10,11 @@ const navUser = $('.nav-user')
 const userAvt = $('#user-avt')
 const userListInfo = $('.user-list-information')
 const logOut = $('#log-out')
+const playlistContent = $('.playlist-content')
+const playlistContentContainer = $('.playlist-content-container')
+
+const yourPlaylist = $$('.your-playlist')
+
 
 var app = {
     authors: [],
@@ -74,7 +79,7 @@ var app = {
     renderPlaylistsRecommend(){
         const htmls = this.playlists.map(playlist => `
                 <div class="playlists">
-                    <img class="playlist-thumb" src="${playlist.song_thumb}" alt="playlist 1">
+                    <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="playlist 1">
                     <h3 class="name">${playlist.playlist_name}</h3>
                 </div>
             `)
@@ -87,13 +92,36 @@ var app = {
             try {
                 const response = await fetch('/data/session');
                 if (response.ok) {
-                    const user = await response.json();
+                    const results = await response.json();
+                    const user = results.user
+                    const playlists = results.playlists
+                    //Chinh lai thanh navigation
                     signIn.style.display = 'none'
                     signUp.style.display = 'none'
 
                     navUser.style.display = 'inline-block'
                     navUser.style.float = 'right'
                     userAvt.src = user.user_avatar
+                    
+                    // Hien thi play list cua nguoi dung neu co
+                    if(playlists.length > 0) {
+                        playlistContent.style.display = 'none'
+                        htmls = playlists.map((playlist) => `
+                                <div class="your-playlists">
+                                    <img src="${playlist.playlist_thumb}" alt="">
+                                    <div class="playlist-info">
+                                        <p class="playlist-title">${playlist.playlist_name}</p>
+                                        <p class="playlist-about">Playlist <i class="bi bi-dot icon"></i> ${user.user_fullname}xxxxxxxxxxxxxxx</p>
+                                    </div>
+                                </div>
+                            `
+    
+                        )
+                        console.log(htmls.join(''))
+                        playlistContentContainer.innerHTML = htmls.join('')
+                        this.interfaceHandler()
+                    }
+
                 } else {
                     // Xử lý khi người dùng không đăng nhập
                     alert('Please log in');
@@ -138,10 +166,34 @@ var app = {
         }
     },
 
+    interfaceHandler() {
+        const playlistTitle = $$('.playlist-title')
+        const playlistAbout = $$('.playlist-about')
+
+        function truncateText(selector, length) {
+            const elements = selector
+            elements.forEach(element => {
+                const text = element.textContent
+                console.log(text)
+
+                if(text.length > length) {
+                    element.textContent = text.slice(0, length) + '...'
+                    console.log('truncated text content')
+                } else {
+                    console.log('not truncated text content')
+                }
+            })
+        }
+
+        truncateText(playlistTitle, 21)
+        truncateText(playlistAbout, 21)
+    },
+
     start() {
         this.fetchAuthors(),
         this.fetchSongs(),
         this.fetchPlaylistsRecommend()
+        this.interfaceHandler()
         this.eventHandler()
 
         const windowHeight = window.innerHeight;

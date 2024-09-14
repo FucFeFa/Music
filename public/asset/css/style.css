@@ -172,6 +172,47 @@ input {
     padding: 0 10px;
 }
 
+.your-playlists {
+    color: #fff;
+    background-color: rgb(42, 42, 42);
+    padding: 16px 24px;
+    margin-top: 10px;
+    min-width: 240px;
+    min-height: 48px;
+    border-radius: 12px;
+}
+
+.your-playlists:hover {
+    background-color: rgb(72, 72, 72);
+    cursor: pointer;
+}
+
+.playlist-info {
+    margin-left: 60px;
+}   
+
+.your-playlists > img {
+    width: 48px;
+    height: 48px;
+    float: left;
+    border-radius: 12px;
+}
+
+.playlist-info > p {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 4px 0;
+    white-space: nowrap;
+}
+
+.playlist-info > p:hover {
+    cursor: pointer;
+}
+
+.playlist-about {
+    opacity: 0.6;
+}
+
 .playlist, .recommend {
     padding: 17px;
 }
@@ -226,6 +267,7 @@ input {
     color: #ddd;
     font-size: 17px;
     font-weight: 600;
+    padding-bottom: 38px;
 }
 
 /* .playlist-header-left {
@@ -276,7 +318,7 @@ input {
 .playlist-content {
     color: #fff;
     background-color: rgb(42, 42, 42);
-    margin-top: 48px;
+    margin-top: 10px;
     padding: 16px 24px;
     border-radius: 12px;
 }

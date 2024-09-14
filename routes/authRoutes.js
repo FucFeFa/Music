@@ -57,24 +57,24 @@ router.post('/signin', async (req, res) => {
 
     try {
         // Kiểm tra tồn tại tài khoản với tên đăng nhập
-    const user = await db('users')
-       .where({ user_username: username })
-       .first();
-    
-    if (!user) {
-        return res.status(401).json({ message: 'Username is not exists' });
-    }
+        const user = await db('users')
+        .where({ user_username: username })
+        .first();
+        
+        if (!user) {
+            return res.status(401).json({ message: 'Username is not exists' });
+        }
 
-    // So sánh mật khẩu đăng nhập với mật khẩu trong cơ sở dữ liệu
-    var match = bcrypt.compareSync(password, user.user_password);
+        // So sánh mật khẩu đăng nhập với mật khẩu trong cơ sở dữ liệu
+        var match = bcrypt.compareSync(password, user.user_password);
 
-    if(!match) {
-        return res.status(401).json({ message: 'Incorrect password' });
-    }
+        if(!match) {
+            return res.status(401).json({ message: 'Incorrect password' });
+        }
 
-    //Tra ve du lieu cung voi session nguoi dung
-    req.session.user = user
-    res.status(200).json({ message: 'Success' });
+        //Tra ve du lieu cung voi session nguoi dung
+        req.session.user = user
+        res.status(200).json({ message: 'Success' });
     }
     catch (err) {
         console.error(err);
