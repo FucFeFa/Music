@@ -82,4 +82,17 @@ router.post('/signin', async (req, res) => {
     }
 });
 
+// Đăng xuất người dùng
+
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if(err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+        res.clearCookie('connect.sid');
+        res.status(200).json({ message: 'Success' });
+    });
+});
+
 module.exports = router;

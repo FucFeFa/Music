@@ -9,6 +9,7 @@ const signIn = $('.nav-signin')
 const navUser = $('.nav-user')
 const userAvt = $('#user-avt')
 const userListInfo = $('.user-list-information')
+const logOut = $('#log-out')
 
 var app = {
     authors: [],
@@ -95,7 +96,7 @@ var app = {
                     userAvt.src = user.user_avatar
                 } else {
                     // Xử lý khi người dùng không đăng nhập
-                    document.getElementById('welcome-message').innerText = 'Please log in';
+                    alert('Please log in');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -117,6 +118,24 @@ var app = {
                 userListInfo.classList.remove('active');
             }
         })
+
+        // Xu ly khi nguoi dung click vao log out
+        logOut.onclick = function () {
+            fetch('/account/logout', {
+                method: 'POST',
+            })
+           .then(response => response.json())
+           .then(data => {
+                if (data.message === 'Success') {
+                    window.location.reload();
+                } else {
+                    alert('Error logging out');
+                }
+            })
+           .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     },
 
     start() {
