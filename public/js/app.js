@@ -3,7 +3,7 @@ const $$ = document.querySelectorAll.bind(document)
 
 const artistContainer = $('.artist-container')
 const songContainer = $('.song-container')
-const playlistContainer = $('.playlist-container')
+const playlistContainerRecommend = $('.playlist-container')
 const signUp = $('.nav-signup')
 const signIn = $('.nav-signin')
 const navUser = $('.nav-user')
@@ -12,6 +12,7 @@ const userListInfo = $('.user-list-information')
 const logOut = $('#log-out')
 const playlistContent = $('.playlist-content')
 const playlistContentContainer = $('.playlist-content-container')
+const playlistContainer = $('#playlist-container')
 
 const yourPlaylist = $$('.your-playlist')
 
@@ -83,7 +84,7 @@ var app = {
                     <h3 class="name">${playlist.playlist_name}</h3>
                 </div>
             `)
-        playlistContainer.innerHTML = htmls.join('')
+        playlistContainerRecommend.innerHTML = htmls.join('')
     },
 
     eventHandler() {
@@ -165,6 +166,12 @@ var app = {
                 console.error('Error:', error);
             });
         }
+
+        //Xu ly khi nguoi dung click chuot phai vao playlists
+        playlistContainer.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            
+        })
     },
 
     interfaceHandler() {
