@@ -101,9 +101,11 @@ var app = {
                 const songId = song.getAttribute('song-id')
                 
                 fetch(`/data/song/${songId}`)
-                .then((response) => response.json())
+                .then((response) => {
+                    return response.json()
+                })
                 .then((data) => {
-                    console.log(data.song_title)
+                    console.log(data[0].song_thumb)
                 })
                 .catch((error) => {
                     console.error('Error fetching song:', error);
@@ -259,14 +261,14 @@ var app = {
         if(this.songActive) {
             //Chinh sua chieu cao content
             const windowHeight = window.innerHeight;
-            fitHeight = windowHeight - (76 + 62)
+            fitHeight = windowHeight - (76 + 74)
             playlistContainer.style.height = `${fitHeight}px`
             recommendContainer.style.height = `${fitHeight}px`
             console.log(windowHeight);
             
             window.addEventListener('resize', () => {
                 console.log('Kích thước cửa sổ đã thay đổi!');
-                const newHeight = window.innerHeight - (76 + 62);
+                const newHeight = window.innerHeight - (76 + 74);
                 playlistContainer.style.height = `${newHeight}px`
                 recommendContainer.style.height = `${newHeight}px`
         });

@@ -471,6 +471,89 @@ h4, p {
     left: 0;
     right: 0;
     width: 100%;
-    height: 72px;
+    height: 84px;
     background-color: black;
+}
+
+#footer-container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    padding: 0 8px 10px 10px;
+    color: #fff;
+}
+
+.song-playing-info {
+    display: flex;
+    align-items: center;
+}
+
+.song-playing-thumb {
+    width: 56px;
+    height: 56px;
+    margin: 8px;
+    border-radius: 12px;
+}
+
+.song-playing-detail {
+    font-size: 14px;
+    line-height: 24px;
+    padding: 16px 0;
+}
+
+.song-playing-name {
+    margin: 0;
+}
+
+.song-playing-artist {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.controll {
+    display: flex;
+    align-items: center;
+    /* height: 36px; */
+    height: 50%;
+    align-items: center;
+    /* justify-content: space-around; */
+    /* padding: 0 155px; */
+    gap: 28px;
+    margin: 5px auto 0 auto;
+}
+
+.icon-pause {
+    display: none;
+}
+
+.icon-play {
+    color: black;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+/* .controll-btn {
+    width: 10px;
+    color: #666;
+    padding: 18px;
+    font-size: 16px;
+    justify-content: center;
+    align-items: center;
+} */
+
+.duration {
+    /* height: 29px; */
+    height: 50%;
+    text-align: center;
+}
+
+.duration > input {
+    width: 60%;
 }
