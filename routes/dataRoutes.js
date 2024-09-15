@@ -82,4 +82,26 @@ router.get('/song/:songId', function(req, res) {
        .catch(err => console.error(err));
 })
 
+// lay tat ca thong tin bai hat qua the loai
+router.get('/song/:songId/genre/:songGenre', (req, res) => {
+    const songGenre = req.params.songGenre;
+    const songId = req.params.songId;
+    db('songs')
+       .select('*')
+       .where('song_genre', songGenre)
+       .join('authors', 'songs.author_id', 'authors.author_id')
+       .then(songs => {
+            const clickSongIndex = songs.findIndex(song => song.song_id == songId)
+
+            if(clickSongIndex > -1) {
+                const clickSong = songs.splice(clickSongIndex, 1)[0];
+
+                songs.unshift(clickSong)
+            }
+
+            res.json(songs);
+        })
+       .catch(err => console.error(err));
+})
+
 module.exports = router;

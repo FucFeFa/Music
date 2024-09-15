@@ -27,17 +27,20 @@ const iconPause = $('.icon-pause')
 const currentTime = $('.current-time')
 const totalTime = $('.total-time')
 const repeatBtn = $('.btn-repeat')
+const nextBtn = $('.btn-next')
 
 const yourPlaylist = $$('.your-playlist')
 
 var app = {
     authors: [],
     songs: [],
+    currentIndex: 0,
     playlistsRecommend: [],
     songActive: false,
     isPlaying: false,
     isRepeat: false,
     isRandom: false,
+
     async fetchAuthors() {
         try {
             const response = await fetch('/data/authors')
@@ -86,7 +89,7 @@ var app = {
 
     renderSongs() {
         const htmls = this.songs.map(song => `
-                <div class="songs" song-id=${song.song_id}>
+                <div class="songs" song-id=${song.song_id} song-genre=${song.song_genre}>
                     <img class="song-thumb" src="${song.song_thumb}" alt="${song.song_title}">
                     <h3 class="name">${song.song_title}</h3>
                 </div>
@@ -112,9 +115,11 @@ var app = {
         console.log(songs)
         songs.forEach(song => {
             song.addEventListener('click', (e) => {
+                this.playlistsRecommend = []
                 // Hien thi bai hat khi click
                 const songId = song.getAttribute('song-id')
-                console.log(this.isPlaying)
+                const songGenre = song.getAttribute('song-genre')
+                console.log(songGenre)
                 
                 fetch(`/data/song/${songId}`)
                 .then((response) => {
@@ -124,16 +129,16 @@ var app = {
                     console.log(data[0].song_thumb)
 
 
-                    songPlayingThumb.src = data[0].song_thumb
-                    songPlayingName.textContent = data[0].song_title
-                    songPlayingArtist.textContent = data[0].author_name
-                    audio.src = data[0].song_sound
+                    // songPlayingThumb.src = data[0].song_thumb
+                    // songPlayingName.textContent = data[0].song_title
+                    // songPlayingArtist.textContent = data[0].author_name
+                    // audio.src = data[0].song_sound
 
 
-                    this.isPlaying = true
-                    iconPause.style.display = 'block'
-                    iconPlay.style.display = 'none'
-                    audio.play() 
+                    // this.isPlaying = true
+                    // iconPause.style.display = 'block'
+                    // iconPlay.style.display = 'none'
+                    // audio.play() 
                     // this.playMusic()
                     
                 })
@@ -146,7 +151,26 @@ var app = {
                 this.songActive = true;
                 this.changeHeightContent();
 
+                // them bai hat vao play list hien tai
+                fetch(`/data/song/${songId}/genre/${songGenre}`)
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    data.forEach(song => {
+                        this.playlistsRecommend.push(song)
+                    })
+
+                    this.currentIndex = 0
+                    this.loadCurrentSong()
+                    this.isPlaying = true
+                    iconPause.style.display = 'block'
+                    iconPlay.style.display = 'none'
+                    audio.play() 
+                })
+
                 
+
             })
         })   
         
@@ -321,6 +345,7 @@ var app = {
     },
 
     playMusic() {
+        const _this = this;
         // Xu ly khi bam vao nut play
         playBtn.addEventListener('click', () => {
             if(this.isPlaying) {
@@ -379,6 +404,42 @@ var app = {
                 }
             }
         }
+
+        
+        // Khi het thoi luong tu dong chuyen bai hat
+        audio.onended = function() {
+            // console.log(app.playlistsRecommend.length)
+            console.log(app.currentIndex)
+            if (app.currentIndex >= app.playlistsRecommend.length - 1) {
+                app.currentIndex = 0; // Quay lại bài hát đầu tiên
+            } else {
+                app.currentIndex++; // Tiến đến bài hát tiếp theo
+            }
+        
+            app.loadCurrentSong(); // Tải bài hát hiện tại
+            audio.play(); 
+        }
+
+        //khi bam vao nut next
+        nextBtn.onclick = function() {
+            // console.log(app.playlistsRecommend.length)
+            console.log(app.currentIndex)
+            if (app.currentIndex >= app.playlistsRecommend.length - 1) {
+                app.currentIndex = 0; // Quay lại bài hát đầu tiên
+            } else {
+                app.currentIndex++; // Tiến đến bài hát tiếp theo
+            }
+        
+            app.loadCurrentSong(); // Tải bài hát hiện tại
+            audio.play(); 
+        }
+    },
+
+    loadCurrentSong() {
+        songPlayingThumb.src = this.playlistsRecommend[this.currentIndex].song_thumb
+        songPlayingName.textContent = this.playlistsRecommend[this.currentIndex].song_title
+        songPlayingArtist.textContent = this.playlistsRecommend[this.currentIndex].author_name
+        audio.src = this.playlistsRecommend[this.currentIndex].song_sound
     },
 
     start() {
@@ -390,7 +451,7 @@ var app = {
 
         this.playMusic()
 
-
+        
 
     }
 }
