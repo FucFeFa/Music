@@ -17,6 +17,16 @@ const recommendContainer = $('#recommend-container')
 const footer = $('#footer')
 const footerContainer = $('#footer-container')
 
+const songPlayingThumb = $('.song-playing-thumb')
+const songPlayingName = $('.song-playing-name')
+const songPlayingArtist = $('.song-playing-artist')
+const playBtn = $('.btn-toggle-play')
+const audio = $('audio')
+const iconPlay = $('.icon-play')
+const iconPause = $('.icon-pause')
+const currentTime = $('.current-time')
+const totalTime = $('.total-time')
+const repeatBtn = $('.btn-repeat')
 
 const yourPlaylist = $$('.your-playlist')
 
@@ -104,6 +114,7 @@ var app = {
             song.addEventListener('click', (e) => {
                 // Hien thi bai hat khi click
                 const songId = song.getAttribute('song-id')
+                console.log(this.isPlaying)
                 
                 fetch(`/data/song/${songId}`)
                 .then((response) => {
@@ -111,51 +122,19 @@ var app = {
                 })
                 .then((data) => {
                     console.log(data[0].song_thumb)
-                    htmls = `
-                        <div class="song-playing-info">
-                            <img src="${data[0].song_thumb}" class="song-playing-thumb" alt="">
-                            <div class="song-playing-detail">
-                                <h3 class="song-playing-name">${data[0].song_title}</h3>
-                                <p class="song-playing-artist">${data[0].author_name}</p>
-                            </div>
-                        </div>
 
-                        <div class="dashboard">
-                            <div class="controll">
-                                <div class="controll-btn btn-repeat">
-                                    <i class="fas fa-redo"></i>
-                                </div>
 
-                                <div class="controll-btn btn-prev">
-                                    <i class="fas fa-step-backward"></i>
-                                </div>
+                    songPlayingThumb.src = data[0].song_thumb
+                    songPlayingName.textContent = data[0].song_title
+                    songPlayingArtist.textContent = data[0].author_name
+                    audio.src = data[0].song_sound
 
-                                <div class="controll-btn btn-toggle-play">
-                                    <i class="fas fa-pause icon-pause"></i>
-                                    <i class="fas fa-play icon-play"></i>
-                                </div>
 
-                                <div class="controll-btn btn-next">
-                                    <i class="fas fa-step-forward"></i>
-                                </div>
-                                
-                                <div class="controll-btn btn-random">
-                                    <i class="fas fa-random"></i>
-                                </div>
-
-                            </div>
-
-                            <div class="duration">
-                                <span class="current-time"></span>
-                                <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
-                                <span class="total-time"></span>
-                            </div>
-
-                            <audio src="${data[0].song_sound}"></audio>
-                    `
-                    footerContainer.innerHTML = htmls
-
-                    this.playMusic()
+                    this.isPlaying = true
+                    iconPause.style.display = 'block'
+                    iconPlay.style.display = 'none'
+                    audio.play() 
+                    // this.playMusic()
                     
                 })
                 .catch((error) => {
@@ -343,29 +322,19 @@ var app = {
 
     playMusic() {
         // Xu ly khi bam vao nut play
-        const playBtn = $('.btn-toggle-play')
-        const audio = $('audio')
-        const iconPlay = $('.icon-play')
-        const iconPause = $('.icon-pause')
-        const currentTime = $('.current-time')
-        const totalTime = $('.total-time')
-        const repeatBtn = $('.btn-repeat')
-        
-        this.isPlaying = true
-        iconPause.style.display = 'block'
-        iconPlay.style.display = 'none'
-        audio.play()
         playBtn.addEventListener('click', () => {
             if(this.isPlaying) {
                 audio.pause()
                 this.isPlaying = false
                 iconPause.style.display = 'none'
                 iconPlay.style.display = 'block'
+                console.log('is paused')
             } else {
                 audio.play()
                 this.isPlaying = true
                 iconPause.style.display = 'block'
                 iconPlay.style.display = 'none'
+                console.log('is playing')
             }
         })
 
@@ -419,6 +388,7 @@ var app = {
         this.interfaceHandler()
         this.eventHandler()
 
+        this.playMusic()
 
 
 
