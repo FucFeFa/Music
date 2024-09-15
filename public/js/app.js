@@ -16,6 +16,8 @@ const playlistContainer = $('#playlist-container')
 const recommendContainer = $('#recommend-container')
 const footer = $('#footer')
 const footerContainer = $('#footer-container')
+const navSearch = $('.nav-search');
+const input = $('input');
 
 const songPlayingThumb = $('.song-playing-thumb')
 const songPlayingName = $('.song-playing-name')
@@ -310,6 +312,16 @@ var app = {
 
         this.changeHeightContent()
         
+        
+
+        // Khi bam vao thanh search
+        // input.addEventListener('focus', () => {
+        //     navSearch.classList.add('nav-search-active')
+        // })
+
+        // input.addEventListener('blur', () => {
+        //     navSearch.classList.remove('nav-search-active')
+        // })
     },
 
     changeHeightContent() {

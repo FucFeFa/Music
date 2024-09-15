@@ -600,3 +600,7 @@ h4, p {
 .btn-active {
     color: #f5595c;
 }
+
+.nav-search-active {
+    border: 2px solid #fff;
+}
