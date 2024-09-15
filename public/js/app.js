@@ -402,47 +402,49 @@ var app = {
 
         //Khi bam vao nut repeat
         repeatBtn.onclick = function() {
-            if(this.isRepeat) {
-                this.isRepeat = false
+            if(_this.isRepeat) {
+                _this.isRepeat = false
                 repeatBtn.classList.remove('btn-active')
                 
             } else {
                 // this.isRandom = false
                 // randomBtn.classList.remove('btn-active')
-                this.isRepeat = true
+                _this.isRepeat = true
                 repeatBtn.classList.add('btn-active')
-                audio.onended = function() {
-                    audio.play()
-                }
+                
             }
         }
 
         
         // Khi het thoi luong tu dong chuyen bai hat
         audio.onended = function() {
-            // console.log(app.playlistsRecommend.length)
-            console.log(app.currentIndex)
-            if (app.currentIndex >= app.playlistsRecommend.length - 1) {
-                app.currentIndex = 0; // Quay lại bài hát đầu tiên
+            // console.log(_this.isRepeat)
+            // console.log(_this.currentIndex)
+            if (_this.isRepeat) {
+                audio.play()
             } else {
-                app.currentIndex++; // Tiến đến bài hát tiếp theo
+                if (_this.currentIndex >= _this.playlistsRecommend.length - 1) {
+                    _this.currentIndex = 0; // Quay lại bài hát đầu tiên
+                }else {
+                    _this.currentIndex++; // Tiến đến bài hát tiếp theo
+                }
             }
         
-            app.loadCurrentSong(); // Tải bài hát hiện tại
+            _this.loadCurrentSong(); // Tải bài hát hiện tại
             audio.play(); 
         }
 
         //khi bam vao nut next
         nextBtn.onclick = function() {
-            // console.log(app.playlistsRecommend.length)
-            console.log(app.currentIndex)
-            if (app.currentIndex >= app.playlistsRecommend.length - 1) {
-                app.currentIndex = 0; // Quay lại bài hát đầu tiên
+            // console.log(_this.playlistsRecommend.length)
+            console.log(_this.currentIndex)
+            if (_this.currentIndex >= _this.playlistsRecommend.length - 1) {
+                _this.currentIndex = 0; // Quay lại bài hát đầu tiên
             } else {
-                app.currentIndex++; // Tiến đến bài hát tiếp theo
+                _this.currentIndex++; // Tiến đến bài hát tiếp theo
             }
         
-            app.loadCurrentSong(); // Tải bài hát hiện tại
+            _this.loadCurrentSong(); // Tải bài hát hiện tại
             audio.play(); 
         }
     },
