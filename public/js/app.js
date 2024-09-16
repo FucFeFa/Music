@@ -447,7 +447,7 @@ var app = {
                 repeatBtn.classList.remove('btn-active')
                 
             } else {
-                this.isRandom = false
+                _this.isRandom = false
                 randomBtn.classList.remove('btn-active')
                 _this.isRepeat = true
                 repeatBtn.classList.add('btn-active')
