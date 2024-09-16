@@ -91,17 +91,20 @@ body {
     box-shadow: 0px 8px 16px 0px rgba(166, 164, 164, 0.1);
 }
 
-.create-playlist-list {
+.create-playlist-list, 
+.edit-playlist-list {
     padding: 0;
     /* height: 30px; */
 }
 
-.create-playlist-list > li {
+.create-playlist-list > li,
+.edit-playlist-list > li {
     display: flex;
     padding: 10px;
 }
 
-.create-playlist-list > li:hover {
+.create-playlist-list > li:hover,
+.edit-playlist-list > li:hover {
     cursor: default;
     background-color: rgb(41, 41, 41);
     border-radius: 8px;
@@ -278,8 +281,8 @@ input {
 
 #playlist-container {
     width: 23%;
-    background-color: rgb(26, 26, 26);
-    border: 1px solid rgb(26, 26, 26);
+    background-color: rgb(22 22 22);
+    border: 1px solid rgb(22 22 22);
     border-radius: 10px;
     height: 660px;
     overflow-y: overlay;
@@ -288,8 +291,8 @@ input {
 #recommend-container {
     width: 75%;
     height: 660px;
-    background-color: rgb(26, 26, 26);
-    border: 1px solid rgb(26, 26, 26);
+    background-color: rgb(22 22 22);
+    border: 1px solid rgb(22 22 22);
     border-radius: 10px;
     overflow-y: overlay;
     margin-left: 12px;
@@ -419,7 +422,7 @@ h4, p {
 .playlists,
 .songs {
     padding: 8px;
-    background-color: rgb(26, 26, 26);
+    background-color: rgb(22 22 22);
     border-radius: 12px;
     margin-left: 16px;
     transition: background-color 0.5s ease;

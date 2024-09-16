@@ -268,29 +268,60 @@ var app = {
             });
         }
 
-        // Tạo menu chuột phải tùy chỉnh
-        const customMenu = document.createElement('div');
-        customMenu.style.display = 'none';
-        customMenu.innerHTML = `
+        // Tạo menu chuột phải khi click ben ngoai o playlist
+        const createPlaylistMenu = document.createElement('div');
+        createPlaylistMenu.style.display = 'none';
+        createPlaylistMenu.innerHTML = `
         <ul class="create-playlist-list">
             <li>Create playlist <i class="bi bi-plus-lg tag-list-icon"></i></li>
         </ul>`;
-        document.body.appendChild(customMenu);
+        document.body.appendChild(createPlaylistMenu);
 
         //Xu ly khi nguoi dung click chuot phai vao playlists
         playlistContainer.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             
-            customMenu.classList.add('active-playlist-menu');
-            customMenu.style.left = `${e.clientX}px`;
-            customMenu.style.top = `${e.clientY}px`;
-            customMenu.style.display = 'block';
+            editPlaylistMenu.classList.remove('active-playlist-menu')
+            editPlaylistMenu.style.display = 'none';
+            createPlaylistMenu.classList.add('active-playlist-menu');
+            createPlaylistMenu.style.left = `${e.clientX}px`;
+            createPlaylistMenu.style.top = `${e.clientY}px`;
+            createPlaylistMenu.style.display = 'block';
+        })
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // Tao menu chinh sua playlist khi click chuot phai vao playlist
+        const editPlaylistMenu = document.createElement('div');
+        editPlaylistMenu.style.display = 'none';
+        editPlaylistMenu.innerHTML = `
+        <ul class="edit-playlist-list">
+            <li>Edit detail <i class="bi bi-pencil tag-list-icon"></i></li>
+            <li>Delete <i class="bi bi-trash tag-list-icon"></i></li>
+        </ul>`;
+        document.body.appendChild(editPlaylistMenu);
+
+        //Xu ly khi nguoi dung click chuot phai vao playlists
+        document.addEventListener('contextmenu', (e) => {
+            if(e.target.closest('.your-playlists')) {
+                e.preventDefault();
+            
+                createPlaylistMenu.classList.remove('active-playlist-menu');
+                createPlaylistMenu.style.display = 'none';
+                editPlaylistMenu.classList.add('active-playlist-menu');
+                editPlaylistMenu.style.left = `${e.clientX}px`;
+                editPlaylistMenu.style.top = `${e.clientY}px`;
+                editPlaylistMenu.style.display = 'block';
+            }
         })
 
         // Xu ly khi nguoi dung click vào menu chuột phải
         document.addEventListener('click', (e) => {
             e.preventDefault();
-            customMenu.style.display = 'none';
+            createPlaylistMenu.style.display = 'none';
+            editPlaylistMenu.style.display = 'none';
+            // if (!createPlaylistMenu.contains(e.target) && !editPlaylistMenu.contains(e.target)) {
+            // }
         })
 
         
