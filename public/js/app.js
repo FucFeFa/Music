@@ -30,6 +30,10 @@ const currentTime = $('.current-time')
 const totalTime = $('.total-time')
 const repeatBtn = $('.btn-repeat')
 const nextBtn = $('.btn-next')
+const prevBtn = $('.btn-prev')
+const randomBtn = $('.btn-random')
+
+
 
 const yourPlaylist = $$('.your-playlist')
 
@@ -104,7 +108,7 @@ var app = {
     renderPlaylistsRecommend(){
         const htmls = this.playlists.map(playlist => `
                 <div class="playlists">
-                    <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="playlist 1">
+                    <img class="playlist-thumb-recommend" src="${playlist.playlist_thumb}" alt="playlist 1">
                     <h3 class="name">${playlist.playlist_name}</h3>
                 </div>
             `)
@@ -201,8 +205,10 @@ var app = {
                         playlistContent.style.display = 'none'
                         htmls = playlists.map((playlist) => `
                                 <div class="your-playlists">
-                                    <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="">
-                                    <i class="fa-solid fa-play playlist-play-btn"></i>
+                                    <div class="playlist-img">
+                                        <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="">
+                                        <i class="fa-solid fa-play playlist-play-btn"></i>
+                                    </div>
                                     <div class="playlist-info">
                                         <p class="playlist-title">${playlist.playlist_name}</p>
                                         <p class="playlist-about">Playlist - ${user.user_fullname}</p>
@@ -214,7 +220,10 @@ var app = {
                         console.log(htmls.join(''))
                         playlistContentContainer.innerHTML = htmls.join('')
                         this.interfaceHandler()
+                        
+                        
                     }
+                    this.createPlaylist(user)
 
                 } else {
                     // Xử lý khi người dùng không đăng nhập
@@ -285,7 +294,7 @@ var app = {
         })
 
         
-
+        
     },
 
     interfaceHandler() {
@@ -407,10 +416,25 @@ var app = {
                 repeatBtn.classList.remove('btn-active')
                 
             } else {
-                // this.isRandom = false
-                // randomBtn.classList.remove('btn-active')
+                this.isRandom = false
+                randomBtn.classList.remove('btn-active')
                 _this.isRepeat = true
                 repeatBtn.classList.add('btn-active')
+                
+            }
+        }
+
+        // Khi bam vao nut random
+        randomBtn.onclick = function() {
+            if(_this.isRandom) {
+                _this.isRandom = false
+                randomBtn.classList.remove('btn-active')
+                
+            } else {
+                _this.isRepeat = false
+                repeatBtn.classList.remove('btn-active')
+                _this.isRandom = true
+                randomBtn.classList.add('btn-active')
                 
             }
         }
@@ -422,6 +446,9 @@ var app = {
             // console.log(_this.currentIndex)
             if (_this.isRepeat) {
                 audio.play()
+            } else if(_this.isRandom){
+                const randomIndex = Math.floor(Math.random() * _this.playlistsRecommend.length)
+                _this.currentIndex = randomIndex;
             } else {
                 if (_this.currentIndex >= _this.playlistsRecommend.length - 1) {
                     _this.currentIndex = 0; // Quay lại bài hát đầu tiên
@@ -447,6 +474,50 @@ var app = {
             _this.loadCurrentSong(); // Tải bài hát hiện tại
             audio.play(); 
         }
+
+        //khi bam vao nut backward
+        prevBtn.onclick = function() {
+            // console.log(_this.playlistsRecommend.length)
+            console.log(_this.currentIndex)
+            if (_this.currentIndex == 0) {
+                _this.currentIndex = 0; // Quay lại bài hát đầu tiên
+            } else {
+                _this.currentIndex--; // Tiến đến bài hát tiếp theo
+            }
+        
+            _this.loadCurrentSong(); // Tải bài hát hiện tại
+            audio.play(); 
+        }
+    },
+
+    createPlaylist(user) {
+        // Xu ly khi click vao nut create playlist
+        const createPlaylistBtn = $('.create-playlist-list')
+        createPlaylistBtn.addEventListener('click', (e) => {
+            fetch(`/data/session/${user.user_id}/playlist`,{
+                method: 'POST',
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                playlistContent.style.display = 'none'
+                const newPlaylist = `
+                    <div class="your-playlists">
+                        <div class="playlist-img">
+                            <img class="playlist-thumb" src="${data.playlist_thumb}" alt="">
+                            <i class="fa-solid fa-play playlist-play-btn"></i>
+                        </div>
+                        <div class="playlist-info">
+                            <p class="playlist-title">${data.playlist_name}</p>
+                            <p class="playlist-about">Playlist - ${user.user_fullname}</p>
+                        </div>
+                    </div>`;
+                
+                playlistContentContainer.innerHTML += newPlaylist;
+
+             })
+             .catch((error) => console.error('Error:', error));
+        })
     },
 
     loadCurrentSong() {

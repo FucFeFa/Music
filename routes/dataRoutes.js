@@ -104,4 +104,30 @@ router.get('/song/:songId/genre/:songGenre', (req, res) => {
        .catch(err => console.error(err));
 })
 
+// Tao mot playlist moi
+router.post('/session/:user_id/playlist', (req, res) => {
+    const user_id = req.params.user_id;
+    
+    db('playlists')
+       .where( {user_id} )
+       .count('user_id as total')
+       .then(result => {
+            const playlist_name = `My Playlist #${result[0].total + 1}`
+            const playlist_thumb = `./asset/img/default_playlist_thumb.jpg`
+            // Tao play list moi
+            return db('playlists')
+                .insert({ playlist_name, user_id })
+                .then(playlist => {
+                        res.json({
+                            "playlist_name": playlist_name,
+                            "playlist_thumb": playlist_thumb
+                        });
+                    })
+                .catch(err => console.error(err));
+       })
+       .catch(err => console.error(err));
+
+       
+});
+
 module.exports = router;

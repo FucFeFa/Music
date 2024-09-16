@@ -230,19 +230,20 @@ input {
     cursor: pointer;
 }
 
-.your-playlists:hover > .playlist-thumb {
+.your-playlists:hover .playlist-thumb {
     opacity: 0.4;
 }
 
-.your-playlists:hover > .playlist-play-btn {
+.your-playlists:hover .playlist-play-btn {
     display: block;
 }
 
 .playlist-info {
     margin-left: 60px;
-}   
+}  
+ 
 
-.your-playlists > img {
+.your-playlists > .playlist-img {
     width: 48px;
     height: 48px;
     float: left;
@@ -251,9 +252,9 @@ input {
 
 .playlist-play-btn {
     display: none;
-    position: absolute;
-    margin-top: 16px;
-    left: 68px;
+    position: relative;
+    bottom:37px;
+    left: 15px;
 }
 
 .playlist-info > p {
@@ -436,8 +437,20 @@ h4, p {
     margin: 4px 0;
 }
 
-.playlist-thumb,
+
 .song-thumb {
+    width: 150px;
+    height: auto;
+    border-radius: 12px;
+}
+
+.playlist-thumb {
+    width: 48px;
+    height: auto;
+    border-radius: 12px;
+}
+
+.playlist-thumb-recommend {
     width: 150px;
     height: auto;
     border-radius: 12px;
