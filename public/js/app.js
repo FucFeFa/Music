@@ -204,7 +204,7 @@ var app = {
                     if(playlists.length > 0) {
                         playlistContent.style.display = 'none'
                         htmls = playlists.map((playlist) => `
-                                <div class="your-playlists">
+                                <div class="your-playlists" playlist-id="${playlist.playlist_id}">
                                     <div class="playlist-img">
                                         <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="">
                                         <i class="fa-solid fa-play playlist-play-btn"></i>
@@ -530,10 +530,10 @@ var app = {
             })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 playlistContent.style.display = 'none'
                 const newPlaylist = `
-                    <div class="your-playlists">
+                    <div class="your-playlists" playlist-id="${data.playlist_id}">
                         <div class="playlist-img">
                             <img class="playlist-thumb" src="${data.playlist_thumb}" alt="">
                             <i class="fa-solid fa-play playlist-play-btn"></i>

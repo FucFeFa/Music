@@ -117,8 +117,10 @@ router.post('/session/:user_id/playlist', (req, res) => {
             // Tao play list moi
             return db('playlists')
                 .insert({ playlist_name, user_id })
-                .then(playlist => {
+                .returning('id')
+                .then(id => {
                         res.json({
+                            "playlist_id": id[0],
                             "playlist_name": playlist_name,
                             "playlist_thumb": playlist_thumb
                         });
