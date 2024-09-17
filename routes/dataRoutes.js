@@ -207,4 +207,18 @@ router.get('/playlist/getPlaylist/:playlistId', (req, res) => {
        .catch(err => console.error(err));
 });
 
+
+// Lay tat ca thong tin bai hat nam cung mot playlist
+router.get('/playlist/getSong/:playlistId', (req, res) => {
+    const playlistId = req.params.playlistId;
+    db('playlist_songs')
+    .select('songs.*', 'authors.author_name')
+    .innerJoin('songs', 'playlist_songs.song_id', 'songs.song_id')
+    .innerJoin('authors','songs.author_id', 'authors.author_id')
+    .where('playlist_songs.playlist_id', playlistId)
+    .then((data) => {
+        res.json(data)
+    })
+})
+
 module.exports = router;

@@ -429,7 +429,7 @@ var app = {
             playlist.addEventListener('click', () => {
                 // Hien thi thong tin playlist khi nguoi dung click vao
                 const playlistId = playlist.getAttribute('playlist-id')
-                console.log(playlistId)
+                // console.log(playlistId)
                 // Hien thi playlist khi nguoi dung click vao
                 fetch(`/data/playlist/getPlaylist/${playlistId}`)
                 .then((response) => response.json())
@@ -477,7 +477,7 @@ var app = {
                         //hien thi bai hat
                         const playlistSongHTML = playlistSong.map((song, index) => {
                             return `
-                                <tr>
+                                <tr class="songs-playlist" song-id=${song.song_id}>
                                     <th>${index+1}</th>
                                     <th>
                                         <div class="playlist-playing-detail-title">
@@ -516,6 +516,49 @@ var app = {
                         })
 
                         getColorThumb()
+
+                        //Khi click vao bai hat trong your playlist
+                        const songs = $$('.songs-playlist')
+                        
+                        songs.forEach((song, index) => {
+                            song.addEventListener('click', function() {
+                                app.playlistsRecommend=[]
+                                // const songId = song.getAttribute('song-id')
+                                // app.playlistsRecommend.push(song)
+                                fetch(`/data/playlist/getSong/${playlistId}`)
+                                    .then((response) => {
+                                        return response.json()
+                                    })
+                                    .then((data) => {
+
+                                        data.forEach((item) => {
+                                            // them bai hat vao play list hien tai
+                                            app.playlistsRecommend.push(item)
+                                        })
+
+                                        console.log(app.playlistsRecommend)
+
+
+                                        //hien thi dashboard va chinh lai chieu cao trang web
+                                        footer.style.display = 'block';
+                                        app.songActive = true;
+                                        app.changeHeightContent();
+
+                                        //load bai hat
+                                        app.currentIndex = index
+                                        console.log(app.currentIndex)
+                                        app.loadCurrentSong()
+                                        app.isPlaying = true
+                                        iconPause.style.display = 'block'
+                                        iconPlay.style.display = 'none'
+                                        audio.play()
+                                        // app.playMusic()
+                                    })
+                                    .catch((error) => {
+                                        console.error('Error fetching song:', error);
+                                    })
+                            })
+                        })
             
                         
                     } else {
@@ -642,15 +685,15 @@ var app = {
         const _this = this;
         // Xu ly khi bam vao nut play
         playBtn.addEventListener('click', () => {
-            if(this.isPlaying) {
+            if(_this.isPlaying) {
                 audio.pause()
-                this.isPlaying = false
+                _this.isPlaying = false
                 iconPause.style.display = 'none'
                 iconPlay.style.display = 'block'
                 console.log('is paused')
             } else {
                 audio.play()
-                this.isPlaying = true
+                _this.isPlaying = true
                 iconPause.style.display = 'block'
                 iconPlay.style.display = 'none'
                 console.log('is playing')
@@ -795,10 +838,10 @@ var app = {
     },
 
     loadCurrentSong() {
-        songPlayingThumb.src = this.playlistsRecommend[this.currentIndex].song_thumb
-        songPlayingName.textContent = this.playlistsRecommend[this.currentIndex].song_title
-        songPlayingArtist.textContent = this.playlistsRecommend[this.currentIndex].author_name
-        audio.src = this.playlistsRecommend[this.currentIndex].song_sound
+        songPlayingThumb.src = app.playlistsRecommend[app.currentIndex].song_thumb
+        songPlayingName.textContent = app.playlistsRecommend[app.currentIndex].song_title
+        songPlayingArtist.textContent = app.playlistsRecommend[app.currentIndex].author_name
+        audio.src = app.playlistsRecommend[app.currentIndex].song_sound
     },
 
     // Khi bam vao nut home thi trang recommend reset lai ve ban dau
