@@ -167,9 +167,27 @@ router.get('/playlist/getPlaylist/:playlistId', (req, res) => {
        .innerJoin('songs', 'playlist_songs.song_id','songs.song_id')
        .innerJoin('authors','songs.author_id', 'authors.author_id')
        .innerJoin('users', 'playlists.user_id', 'users.user_id')
-       .groupBy('songs.song_id')
-       .then(playlist => {
-            res.json(playlist);
+    //    .groupBy('songs.song_id')
+       .then(playlistData => {
+            if(playlistData.length > 0){
+                const playlist = playlistData[0];
+                const songs = playlistData.map(song => ({
+                    song_id: song.song_id,
+                    song_title: song.song_title,
+                    song_thumb: song.song_thumb,
+                    author_name: song.author_name,
+                    song_sound: song.song_sound
+                }))
+
+                res.json({
+                    playlist_id: playlist.playlist_id,
+                    playlist_name: playlist.playlist_name,
+                    playlist_thumb: playlist.playlist_thumb,
+                    user_fullname: playlist.user_fullname,
+                    playlistSong: songs
+                });
+            }
+
         })
        .catch(err => console.error(err));
 });

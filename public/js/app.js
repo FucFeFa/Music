@@ -410,15 +410,16 @@ var app = {
                 fetch(`/data/playlist/getPlaylist/${playlistId}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    if(data.length>0){
+                    if(data){
+                        const playlistSong = data.playlistSong
 
                         const htmls = `
                             <div id="playlist-playing">
                         <div id="playlist-playing-info">
-                            <img class="playlist-thumb-recommend" src="${data[0].playlist_thumb}" alt="">
+                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
                             <div class="playlist-playing-text">
-                                <h1>${data[0].playlist_name}</h1>
-                                <p>${data[0].user_fullname} - ${data.length} songs, 6 min 22 sec</p>
+                                <h1>${data.playlist_name}</h1>
+                                <p>${data.user_fullname} - ${data.length} songs</p>
                             </div>
                         </div>
                     </div>
@@ -439,31 +440,67 @@ var app = {
                                     </tr>
                                 </thead>
     
-                                <tbody>
-                                    <tr>
-                                        <th>1</th>
-                                        <th>
-                                            <div class="playlist-playing-detail-title">
-                                                <img src="./asset/img/artworks-ktcCxRWsCneXixss-s55z6A-t500x500.jpg" alt="">
-                                                <div>
-                                                    <h4>Suki ga Levechi</h4>
-                                                    <p>KIRA</p>
-                                                </div>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            4 hours ago
-                                        </th>
-                                        <th>
-                                            3:51
-                                        </th>
-                                    </tr>
+                                <tbody class="playlist-playing-song">
+                                    
                                 </tbody>
                             </table>
                         </div>
                     </div>
                         `
+                        //Hien thi playlist
                         $('.recommend').innerHTML = htmls
+
+                        //hien thi bai hat
+                        const playlistSongHTML = playlistSong.map((song, index) => {
+                            return `
+                                <tr>
+                                    <th>${index}</th>
+                                    <th>
+                                        <div class="playlist-playing-detail-title">
+                                            <img src="${song.song_thumb}" alt="">
+                                            <div>
+                                                <h4>${song.song_title}</h4>
+                                                <p>${song.author_name}</p>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        4 hours ago
+                                    </th>
+                                    <th class="song-duration">
+                                        
+                                    </th>
+
+                                    <audio class="audio-player" src="${song.song_sound}"></audio>
+                                </tr>
+                            `
+                        })
+
+
+                        $('.playlist-playing-song').innerHTML = playlistSongHTML.join('')
+
+                        //Lay thoi luong cua moi bai hat
+                        const audios = $$('.audio-player')
+                        audios.forEach((audio, index) => {
+                            audio.addEventListener('loadedmetadata', function() {
+                                const duration = audio.duration;
+                                //Thoi luong bai hat
+                                var minutes = Math.floor(duration/60)
+                                var seconds = Math.floor((duration / 60 - minutes)*60)
+                                $$('.song-duration')[index].innerHTML = minutes.toString().padStart(2, '0')+':'+ seconds.toString().padStart(2, '0')
+                            });
+                        })
+
+                        //Lay mau chu dao cua anh 
+                        const colorThief = new ColorThief();
+                        const img = $('#thumb_song');
+                        img.onload = function() {
+                            const color = colorThief.getColor(img);
+                            $('#playlist-playing-info').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
+                            $('.playlist-playing-content').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
+                        }
+            
+                        
                     }
                 })
                 .catch((error) => {
