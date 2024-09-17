@@ -184,8 +184,23 @@ router.get('/playlist/getPlaylist/:playlistId', (req, res) => {
                     playlist_name: playlist.playlist_name,
                     playlist_thumb: playlist.playlist_thumb,
                     user_fullname: playlist.user_fullname,
+                    is_empty: false,
                     playlistSong: songs
                 });
+            } else {
+                db('playlists')
+                .select('*')
+                .where('playlists.playlist_id', playlistId)
+                .innerJoin('users', 'playlists.user_id', 'users.user_id')
+                .then(playlist => {
+                    res.json({
+                        playlist_id: playlist[0].playlist_id,
+                        playlist_name: playlist[0].playlist_name,
+                        playlist_thumb: playlist[0].playlist_thumb,
+                        user_fullname: playlist[0].user_fullname,
+                        is_empty: true
+                    })
+                })
             }
 
         })

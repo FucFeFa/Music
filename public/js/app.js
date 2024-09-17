@@ -401,6 +401,17 @@ var app = {
 
         // Xu ly khi nguoi dung click vao playlists
         function loadYourPlaylist() {
+            function getColorThumb() {
+                //Lay mau chu dao cua anh 
+                const colorThief = new ColorThief();
+                const img = $('#thumb_song');
+                img.onload = function() {
+                    const color = colorThief.getColor(img);
+                    $('#playlist-playing-info').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
+                    $('.playlist-playing-content').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
+                }
+            }
+
             $$('.your-playlists').forEach((playlist) => {
             playlist.addEventListener('click', () => {
                 // Hien thi thong tin playlist khi nguoi dung click vao
@@ -410,7 +421,7 @@ var app = {
                 fetch(`/data/playlist/getPlaylist/${playlistId}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    if(data){
+                    if(!data.is_empty){
                         const playlistSong = data.playlistSong
 
                         const htmls = `
@@ -419,7 +430,7 @@ var app = {
                             <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
                             <div class="playlist-playing-text">
                                 <h1>${data.playlist_name}</h1>
-                                <p>${data.user_fullname} - ${data.length} songs</p>
+                                <p>${data.user_fullname} - ${playlistSong.length} songs</p>
                             </div>
                         </div>
                     </div>
@@ -454,7 +465,7 @@ var app = {
                         const playlistSongHTML = playlistSong.map((song, index) => {
                             return `
                                 <tr>
-                                    <th>${index}</th>
+                                    <th>${index+1}</th>
                                     <th>
                                         <div class="playlist-playing-detail-title">
                                             <img src="${song.song_thumb}" alt="">
@@ -491,16 +502,74 @@ var app = {
                             });
                         })
 
-                        //Lay mau chu dao cua anh 
-                        const colorThief = new ColorThief();
-                        const img = $('#thumb_song');
-                        img.onload = function() {
-                            const color = colorThief.getColor(img);
-                            $('#playlist-playing-info').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
-                            $('.playlist-playing-content').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
-                        }
+                        getColorThumb()
             
                         
+                    } else {
+
+                        const htmls = `
+                            <div id="playlist-playing">
+                        <div id="playlist-playing-info">
+                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
+                            <div class="playlist-playing-text">
+                                <h1>${data.playlist_name}</h1>
+                                <p>${data.user_fullname} - 0 song</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="playlist-playing-content">
+                        <div class="playlist-playing-content-heading">
+                            <i class="fa-solid fa-play icon"></i>
+                        </div>
+    
+                        <div class="playlist-playing-detail">
+                            <table>
+                                <thead class="table-title">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Date added</th>
+                                        <th><i class="fa-regular fa-clock"></i></th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody class="playlist-playing-song">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                        `
+                        //Hien thi playlist
+                        $('.recommend').innerHTML = htmls
+
+                        //hien thi bai hat
+                            playlistSongHTML =  `
+                                <tr>
+                                    <th></th>
+                                    <th>
+                                        <div class="playlist-playing-detail-title">
+                                            
+                                            <div>
+                                                <h4></h4>
+                                                <p></p>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        
+                                    </th>
+                                    <th class="song-duration">
+                                        
+                                    </th>
+
+                                    <audio class="audio-player" src=""></audio>
+                                </tr>
+                            `
+                            $('.playlist-playing-song').innerHTML = playlistSongHTML
+
+                        getColorThumb()
                     }
                 })
                 .catch((error) => {
