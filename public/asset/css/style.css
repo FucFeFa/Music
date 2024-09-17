@@ -620,3 +620,118 @@ h4, p {
 .nav-search-active {
     border: 2px solid #fff;
 }
+
+#playlist-playing-info {
+    display: grid;
+    grid-template-columns: 198px 568px;
+    padding-bottom: 22px;
+    background: linear-gradient(to bottom, rgba(251,165,252,0.8), rgba(251,165,252,0.6))
+}
+
+.playlist-playing-text {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin-top: 91px;
+    margin-right: 21px;
+    gap: 12px;
+}
+
+.playlist-playing-text > h1,
+.playlist-playing-text > p{
+    margin: 0;
+}
+
+#playlist-playing-info > .playlist-thumb-recommend {
+    margin-top: 22px;
+    margin-left: 22px;
+}
+
+.playlist-playing-content {
+    /* background-color: #7e537e; */
+    padding-left: 10px;
+    /* height: 70px; */
+    /* display: flex; */
+    background: linear-gradient(to bottom, rgba(251,165,252,0.5), rgba(251,165,252,0));
+    
+}
+
+.playlist-playing-content-heading {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    padding: 12px;
+}
+
+.playlist-playing-content-heading > .icon {
+    background-color: #f5595c;
+    border: none;
+    font-size: 32px;
+    width: 34px;
+    height: 34px;
+}
+
+.active-playlist-playing {
+    /* background: linear-gradient(to bottom, rgba(251,165,252,0.), rgba(251,165,252,0));  */
+    padding: 0;
+}
+
+.playlist-playing-detail {
+    color: #fff;
+}
+
+.table-title {
+    opacity: 0.8;
+}
+
+th, td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+}
+
+th:nth-child(1), td:nth-child(1) {
+    padding-left: 35px;
+    width: 100px;
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 500px;
+}
+
+th:nth-child(3), td:nth-child(3) {
+    width: 300px;
+}
+
+th:nth-child(4), td:nth-child(4) {
+    width: 100px;
+}
+
+.playlist-playing-detail-title {
+    display: grid;
+    grid-template-columns: 60px auto;
+}
+
+.playlist-playing-detail-title > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.playlist-playing-detail-title > img {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+}
+
+.playlist-playing-detail-title h4 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.playlist-playing-detail-title p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    opacity: 0.7;
+}

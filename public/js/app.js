@@ -18,6 +18,7 @@ const footer = $('#footer')
 const footerContainer = $('#footer-container')
 const navSearch = $('.nav-search');
 const input = $('input');
+const homeBtn = $('.nav-home')
 
 const songPlayingThumb = $('.song-playing-thumb')
 const songPlayingName = $('.song-playing-name')
@@ -35,13 +36,14 @@ const randomBtn = $('.btn-random')
 
 
 
-const yourPlaylist = $$('.your-playlist')
+const yourPlaylist = $$('.your-playlists')
 
 var app = {
     authors: [],
     songs: [],
     currentIndex: 0,
     playlistsRecommend: [],
+    currentPlaylistId: null,
     songActive: false,
     isPlaying: false,
     isRepeat: false,
@@ -113,9 +115,22 @@ var app = {
                 </div>
             `)
         playlistContainerRecommend.innerHTML = htmls.join('')
+        
+        
+        //Xu ly khi nguoi dung click vao nut home
+        window.onload = this.saveInitialState()
+        homeBtn.addEventListener('click', () =>{
+            this.resetToInitialState()
+            this.songClickEvent()
+        })
     },
 
     songClickEvent() {
+        // window.onload = this.saveInitialState()
+        // homeBtn.addEventListener('click', () =>{
+        //     this.resetToInitialState()
+        //     this.songClickEvent()
+        // })
         //Xu ly khi nguoi dung click vao bai hat
         const songs = $$('.songs')
         console.log(songs)
@@ -175,7 +190,11 @@ var app = {
                     audio.play() 
                 })
 
-                
+                // Xu ly khi nguoi dung click vao nut home
+                // window.onload = this.saveInitialState()
+                // homeBtn.addEventListener('click', () =>{
+                //     this.resetToInitialState()
+                // })
 
             })
         })   
@@ -217,7 +236,7 @@ var app = {
                             `
     
                         )
-                        console.log(htmls.join(''))
+                        // console.log(htmls.join(''))
                         playlistContentContainer.innerHTML = htmls.join('')
                         this.interfaceHandler()
                         
@@ -296,8 +315,8 @@ var app = {
         editPlaylistMenu.style.display = 'none';
         editPlaylistMenu.innerHTML = `
         <ul class="edit-playlist-list">
-            <li>Edit detail <i class="bi bi-pencil tag-list-icon"></i></li>
-            <li>Delete <i class="bi bi-trash tag-list-icon"></i></li>
+            <li class="edit-playlist">Edit detail <i class="bi bi-pencil tag-list-icon"></i></li>
+            <li class="delete-playlist">Delete <i class="bi bi-trash tag-list-icon"></i></li>
         </ul>`;
         document.body.appendChild(editPlaylistMenu);
 
@@ -306,6 +325,8 @@ var app = {
             if(e.target.closest('.your-playlists')) {
                 e.preventDefault();
             
+                app.currentPlaylistId = e.target.closest('.your-playlists').getAttribute('playlist-id');
+
                 createPlaylistMenu.classList.remove('active-playlist-menu');
                 createPlaylistMenu.style.display = 'none';
                 editPlaylistMenu.classList.add('active-playlist-menu');
@@ -323,6 +344,31 @@ var app = {
             // if (!createPlaylistMenu.contains(e.target) && !editPlaylistMenu.contains(e.target)) {
             // }
         })
+
+        $('.delete-playlist').addEventListener('click', (e) => {
+            // const playlistDeleteId = this.closest('.your-playlist')
+            const playlistDeleteId = app.currentPlaylistId
+
+            fetch(`/data/playlist/delete/${playlistDeleteId}`,{
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                removePlaylistFromUI(data.playlistDeletedId)
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        })
+
+        function removePlaylistFromUI(playlistId) {
+            const playlistElement = $(`[playlist-id="${playlistId}"]`)
+            if(playlistElement) {
+                playlistElement.remove()
+            }
+        }
 
         
         
@@ -351,6 +397,83 @@ var app = {
         truncateText(playlistAbout, 21)
 
         this.changeHeightContent()
+
+
+        // Xu ly khi nguoi dung click vao playlists
+        function loadYourPlaylist() {
+            $$('.your-playlists').forEach((playlist) => {
+            playlist.addEventListener('click', () => {
+                // Hien thi thong tin playlist khi nguoi dung click vao
+                const playlistId = playlist.getAttribute('playlist-id')
+                console.log(playlistId)
+                // Hien thi playlist khi nguoi dung click vao
+                fetch(`/data/playlist/getPlaylist/${playlistId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if(data.length>0){
+
+                        const htmls = `
+                            <div id="playlist-playing">
+                        <div id="playlist-playing-info">
+                            <img class="playlist-thumb-recommend" src="${data[0].playlist_thumb}" alt="">
+                            <div class="playlist-playing-text">
+                                <h1>${data[0].playlist_name}</h1>
+                                <p>${data[0].user_fullname} - ${data.length} songs, 6 min 22 sec</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="playlist-playing-content">
+                        <div class="playlist-playing-content-heading">
+                            <i class="fa-solid fa-play icon"></i>
+                        </div>
+    
+                        <div class="playlist-playing-detail">
+                            <table>
+                                <thead class="table-title">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Date added</th>
+                                        <th><i class="fa-regular fa-clock"></i></th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody>
+                                    <tr>
+                                        <th>1</th>
+                                        <th>
+                                            <div class="playlist-playing-detail-title">
+                                                <img src="./asset/img/artworks-ktcCxRWsCneXixss-s55z6A-t500x500.jpg" alt="">
+                                                <div>
+                                                    <h4>Suki ga Levechi</h4>
+                                                    <p>KIRA</p>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            4 hours ago
+                                        </th>
+                                        <th>
+                                            3:51
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                        `
+                        $('.recommend').innerHTML = htmls
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            })
+        })
+        }
+        
+        loadYourPlaylist()
         
         
 
@@ -545,6 +668,7 @@ var app = {
                     </div>`;
                 
                 playlistContentContainer.innerHTML += newPlaylist;
+                this.interfaceHandler()
 
              })
              .catch((error) => console.error('Error:', error));
@@ -556,6 +680,24 @@ var app = {
         songPlayingName.textContent = this.playlistsRecommend[this.currentIndex].song_title
         songPlayingArtist.textContent = this.playlistsRecommend[this.currentIndex].author_name
         audio.src = this.playlistsRecommend[this.currentIndex].song_sound
+    },
+
+    // Khi bam vao nut home thi trang recommend reset lai ve ban dau
+    saveInitialState() {
+        const elements = $$('.recommend')
+        elements.forEach(element => {
+            element.setAttribute('data-initial-html', element.innerHTML)
+        })
+    },
+
+    resetToInitialState() {
+        const elements = $$('.recommend')
+        elements.forEach(element => {
+            const initialHTML = element.getAttribute('data-initial-html')
+            if(initialHTML !== null){
+                element.innerHTML = initialHTML
+            }
+        })
     },
 
     start() {

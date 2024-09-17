@@ -132,4 +132,46 @@ router.post('/session/:user_id/playlist', (req, res) => {
        
 });
 
+// Xoa playlist
+router.delete('/playlist/delete/:playlistDeleteId', (req, res) => {
+    const playlistDeletedId = req.params.playlistDeleteId
+
+    db('playlist_songs')
+        .where('playlist_id', playlistDeletedId)
+        .del()
+        .then(() => {
+            db('playlists')
+                .where('playlist_id', playlistDeletedId)
+                .del()
+                .then(() => {
+                    res.json({ 
+                        message: `Playlist deleted successfully`,
+                        playlistDeletedId: playlistDeletedId,
+                    });
+                })
+                .catch(err => console.error(err));
+        })
+        .catch(err => console.error(err));
+})
+
+
+// Tra ve thong tin ve playlist chi dinh
+
+router.get('/playlist/getPlaylist/:playlistId', (req, res) => {
+    const playlistId = req.params.playlistId;
+
+    db('playlists')
+       .select('*')
+       .where('playlists.playlist_id', playlistId)
+       .innerJoin('playlist_songs', 'playlists.playlist_id', 'playlist_songs.playlist_id')
+       .innerJoin('songs', 'playlist_songs.song_id','songs.song_id')
+       .innerJoin('authors','songs.author_id', 'authors.author_id')
+       .innerJoin('users', 'playlists.user_id', 'users.user_id')
+       .groupBy('songs.song_id')
+       .then(playlist => {
+            res.json(playlist);
+        })
+       .catch(err => console.error(err));
+});
+
 module.exports = router;
