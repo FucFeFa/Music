@@ -93,6 +93,12 @@ var app = {
                 </div>
             `)
         artistContainer.innerHTML = htmls.join('')
+        //Xu ly khi nguoi dung click vao nut home
+        window.onload = this.saveInitialState()
+        homeBtn.addEventListener('click', () =>{
+            this.resetToInitialState()
+            this.songClickEvent()
+        })
     },
 
     renderSongs() {
@@ -105,6 +111,13 @@ var app = {
         songContainer.innerHTML = htmls.join('')
 
         this.songClickEvent()
+
+        //Xu ly khi nguoi dung click vao nut home
+        window.onload = this.saveInitialState()
+        homeBtn.addEventListener('click', () =>{
+            this.resetToInitialState()
+            this.songClickEvent()
+        })
     },
 
     renderPlaylistsRecommend(){
