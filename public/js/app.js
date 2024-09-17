@@ -427,7 +427,7 @@ var app = {
                         const htmls = `
                             <div id="playlist-playing">
                         <div id="playlist-playing-info">
-                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
+                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${playlistSong[0].song_thumb}" alt="">
                             <div class="playlist-playing-text">
                                 <h1>${data.playlist_name}</h1>
                                 <p>${data.user_fullname} - ${playlistSong.length} songs</p>
