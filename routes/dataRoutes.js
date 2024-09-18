@@ -53,6 +53,8 @@ router.get('/session', async (req, res) => {
             const user = req.session.user
             const playlists =  await db('playlists')
             .select('*')
+            // .innerJoin('playlist_songs', 'playlists.playlist_id', 'playlist_songs.playlist_id')
+            // .innerJoin('songs', 'playlist_songs.song_id', 'songs.song_id')
             .where({user_id: user.user_id})
             res.json({
                 user, 
@@ -183,6 +185,7 @@ router.get('/playlist/getPlaylist/:playlistId', (req, res) => {
                     playlist_id: playlist.playlist_id,
                     playlist_name: playlist.playlist_name,
                     playlist_thumb: playlist.playlist_thumb,
+                    playlist_thumb_custom: playlist.playlist_thumb_custom,
                     user_fullname: playlist.user_fullname,
                     is_empty: false,
                     playlistSong: songs
@@ -216,6 +219,22 @@ router.get('/playlist/getSong/:playlistId', (req, res) => {
     .innerJoin('songs', 'playlist_songs.song_id', 'songs.song_id')
     .innerJoin('authors','songs.author_id', 'authors.author_id')
     .where('playlist_songs.playlist_id', playlistId)
+    .then((data) => {
+        res.json(data)
+    })
+})
+
+
+// Tra ve ket qua da tim kiem
+router.get('/search/:searchText', (req, res) => {
+    const searchText = req.params.searchText
+    db('songs')
+    .select('*', 'authors.author_name')
+    .innerJoin('authors','songs.author_id', 'authors.author_id')
+    .where('songs.song_title', 'like', `%${searchText}%`)
+    .orWhere('authors.author_name', 'like', `%${searchText}%`)
+    .orderBy('songs.song_rate', 'desc')
+    .limit(4)
     .then((data) => {
         res.json(data)
     })

@@ -279,6 +279,10 @@ input {
     padding: 17px;
 }
 
+.recommend {
+    color: #fff;
+}
+
 #playlist-container {
     width: 23%;
     min-width: 322px;
@@ -452,7 +456,7 @@ h4, p {
 .playlist-thumb {
     width: 48px;
     height: auto;
-    border-radius: 12px;
+    border-radius: 7px;
 }
 
 .playlist-thumb-recommend {
@@ -736,4 +740,111 @@ th:nth-child(4), td:nth-child(4) {
     font-size: 16px;
     font-weight: 400;
     opacity: 0.7;
+}
+
+.all {
+    background-color: #5c5c5c;
+    padding: 6px 13px;
+    font-size: 15px;
+    border-radius: 9999px;
+}
+
+.filter-active {
+    color: #000;
+    background-color: #fff;
+    padding: 6px 13px;
+    font-size: 15px;
+    border-radius: 9999px;
+}
+
+.result {
+    margin-top: 60px;
+    padding: 0 16px;
+    display: flex;
+}
+
+.top-result-detail {
+    background-color: #1b1b1b;
+    border-radius: 12px;
+    width: 400px;
+    padding: 24px 0 8px 22px;
+    transition: background-color ease 0.5s;
+}
+
+.top-result-detail:hover {
+    cursor: pointer;
+    background-color: #252525;
+    transition: background-color ease 0.5s;
+}
+
+.top-result-detail > h1 {
+    margin-bottom: 0;
+}
+
+.top-result-detail > p {
+    opacity: 0.8;
+}
+
+.top-result-detail > img {
+    width: 100px;
+    height: auto;
+    border-radius: 7px;
+}
+
+.songs-result {
+    width: 600px;
+    margin-left: 50px;
+    flex-wrap: wrap;
+}
+
+.song-item {
+    display: grid;
+    grid-template-columns: 60px auto auto;
+    padding: 10px;
+    background-color: rgb(22, 22, 22);
+    border-radius: 4px;
+    transition: background-color ease 0.5s;
+}
+
+.song-item:hover {
+    cursor: pointer;
+    background-color: rgb(55, 54, 54);
+    transition: background-color ease 0.5s;
+}
+
+.song-item-thumb {
+    width: 40px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.song-item-detail {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    gap: 4px;
+}
+
+.song-item-title{
+    margin: 0;
+}
+
+.song-item-artist {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.ellipsis {
+    margin: auto 10px auto auto;
+}
+
+.ellipsis:hover {
+    transform: scale(1.1);
+}
+
+.text-not-found {
+    overflow-wrap: break-word;
+    font-size: 35px;
+    font-weight: 600;
+   text-align: center;
 }

@@ -43,6 +43,7 @@ var app = {
     songs: [],
     currentIndex: 0,
     playlistsRecommend: [],
+    searchSuggestions: [],
     currentPlaylistId: null,
     songActive: false,
     isPlaying: false,
@@ -232,13 +233,35 @@ var app = {
                     navUser.style.float = 'right'
                     userAvt.src = user.user_avatar
                     
-                    // Hien thi play list cua nguoi dung neu co
-                    if(playlists.length > 0) {
-                        playlistContent.style.display = 'none'
-                        htmls = playlists.map((playlist) => `
+                    if (playlists.length > 0) {
+                        playlistContent.style.display = 'none';
+                    
+                        const htmls = await Promise.all(playlists.map(async (playlist) => {
+                            let playlistThumb = playlist.playlist_thumb;
+                    
+                            // Nếu playlist không có ảnh tùy chỉnh, lấy từ bài hát đầu tiên
+                            if (!playlist.playlist_thumb_custom) {
+                                try {
+                                    const response = await fetch(`data/playlist/getPlaylist/${playlist.playlist_id}`);
+                    
+                                    const data = await response.json();
+                    
+                                    // Kiểm tra nếu playlistSong tồn tại và có ít nhất 1 bài hát
+                                    if (data.playlistSong && data.playlistSong.length > 0) {
+                                        playlistThumb = data.playlistSong[0].song_thumb;
+                                    } else {
+                                        playlistThumb = playlist.playlist_thumb;
+                                    }
+                    
+                                } catch (error) {
+                                    console.error('Lỗi khi lấy dữ liệu từ API:', error);
+                                }
+                            }
+                    
+                            return `
                                 <div class="your-playlists" playlist-id="${playlist.playlist_id}">
                                     <div class="playlist-img">
-                                        <img class="playlist-thumb" src="${playlist.playlist_thumb}" alt="">
+                                        <img class="playlist-thumb" src="${playlistThumb}" alt="">
                                         <i class="fa-solid fa-play playlist-play-btn"></i>
                                     </div>
                                     <div class="playlist-info">
@@ -246,9 +269,8 @@ var app = {
                                         <p class="playlist-about">Playlist - ${user.user_fullname}</p>
                                     </div>
                                 </div>
-                            `
-    
-                        )
+                            `;
+                        }));
                         // console.log(htmls.join(''))
                         playlistContentContainer.innerHTML = htmls.join('')
                         this.interfaceHandler()
@@ -473,6 +495,7 @@ var app = {
                         `
                         //Hien thi playlist
                         $('.recommend').innerHTML = htmls
+                        $('.recommend').classList.add('active-playlist-playing')
 
                         //hien thi bai hat
                         const playlistSongHTML = playlistSong.map((song, index) => {
@@ -640,13 +663,13 @@ var app = {
         
 
         // Khi bam vao thanh search
-        // input.addEventListener('focus', () => {
-        //     navSearch.classList.add('nav-search-active')
-        // })
+        input.addEventListener('focus', () => {
+            navSearch.classList.add('nav-search-active')
+        })
 
-        // input.addEventListener('blur', () => {
-        //     navSearch.classList.remove('nav-search-active')
-        // })
+        input.addEventListener('blur', () => {
+            navSearch.classList.remove('nav-search-active')
+        })
     },
 
     changeHeightContent() {
@@ -854,13 +877,85 @@ var app = {
 
     resetToInitialState() {
         const elements = $$('.recommend')
+        $('.recommend').classList.remove('active-playlist-playing')
         elements.forEach(element => {
             const initialHTML = element.getAttribute('data-initial-html')
             if(initialHTML !== null){
                 element.innerHTML = initialHTML
             }
         })
+        $('input[type="text"]').value = ''
     },
+
+    searchSong() {
+        const searchInput = $('input[type="text"]')
+        console.log(searchInput)
+        searchInput.addEventListener('input', () => {
+            const searchText = searchInput.value.toLowerCase()
+            //Kiem tra neu nguoi dung nhap dung dinh dang
+            if(searchText.trim() !== ''){
+                // console.log(searchText)
+                fetch(`/data/search/${searchText}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if(data.length > 0){
+
+                        const topResultHtml = `
+                            <div class="filter">
+                                <span class="all filter-active">All</span>
+                            </div>
+    
+                            <div class="result">
+                                <div class="top-result">
+                                    <h2>Top result</h2>
+                                    <div class="top-result-detail">
+                                        <img src="${data[0].song_thumb}" alt="">
+                                        <h1>${data[0].song_title}</h1>
+                                        <p>Artist - ${data[0].author_name}</p>
+                                    </div>
+                                    
+                                </div>
+    
+                                <div class="songs-result">
+                                    <h2>Songs</h2>
+                        `
+                        let songResultHtml=''
+                        const endResultHtml = `
+                            </div>
+                        </div>
+                        `
+                        data.map((song) => {
+                            return songResultHtml += `
+                                <div class="song-item">
+                                    <img class="song-item-thumb" src="${song.song_thumb}" alt="">
+                                    <div class="song-item-detail">
+                                        <h3 class="song-item-title">${song.song_title}</h3>
+                                        <p class="song-item-artist">${song.author_name}</p>
+                                    </div>
+                                    <i class="fa-solid fa-ellipsis ellipsis"></i>
+                                </div>
+                            `
+                        })
+    
+                        const finalHtml = topResultHtml.concat(songResultHtml.concat(endResultHtml))
+                        $('.recommend').innerHTML =  finalHtml
+                    } else {
+                        $('.recommend').innerHTML = `<div class="text-not-found">No result for ${searchText}</div>`
+                    }
+                })
+
+            } else {
+                this.resetToInitialState()
+            }
+        })
+    },
+
+    // addSongToPlaylist() {
+    //     //Khi click vao nut 3 cham ben ket qua nhac da tim kiem
+    //     $$('.ellipsis').forEach(() => {
+
+    //     })
+    // },
 
     start() {
         this.fetchAuthors(),
@@ -872,7 +967,10 @@ var app = {
         this.playMusic()
 
         
+        this.searchSong()
 
+        $('.filter-active').style.color = '#000'
+        $('.filter-active').style.backgroundColor = '#fff'
     }
 }
 
