@@ -110,6 +110,25 @@ body {
     border-radius: 8px;
 }
 
+.ellipsis-menu  {
+    padding: 0;
+    margin: 0;
+}
+
+.ellipsis-menu > li,
+.playlist-exist li {
+    display: flex;
+    padding: 12px;
+    margin: 3px;
+    border-radius: 3px;
+}
+
+.ellipsis-menu > li:hover,
+.playlist-exist li:hover {
+    cursor: default;
+    background-color: #606060;
+}
+
 .active-playlist-menu {
     display: block;
     position: absolute;
@@ -120,6 +139,34 @@ body {
     background-color: rgb(55 54 54);
     border-radius: 10px;
     box-shadow: 0px 8px 16px 0px rgba(166, 164, 164, 0.1);
+}
+
+.active-ellipsis-menu,
+.add-to-playlist-menu {
+    display: block;
+    position: absolute;
+    width: 188px;
+    color: #fff;
+    list-style-type: none;
+    right: 8px;
+    background-color: #474747;
+    border-radius: 3px;
+    box-shadow: 0px 8px 16px 0px rgba(166, 164, 164, 0.1);
+}
+
+.add-to-playlist-menu {
+    max-height: 372px;
+    display: none;
+    z-index: 1;
+}
+
+.playlist-exist {
+    padding: 0;
+    margin: 0;
+}
+
+.show-more-icon {
+    margin: auto 0;
 }
 
 .active-playlist-menu > ul {

@@ -939,8 +939,10 @@ var app = {
     
                         const finalHtml = topResultHtml.concat(songResultHtml.concat(endResultHtml))
                         $('.recommend').innerHTML =  finalHtml
+
+                        this.addSongToPlaylist()
                     } else {
-                        $('.recommend').innerHTML = `<div class="text-not-found">No result for ${searchText}</div>`
+                        $('.recommend').innerHTML = `<div class="text-not-found">No result for "${searchText}"</div>`
                     }
                 })
 
@@ -950,12 +952,88 @@ var app = {
         })
     },
 
-    // addSongToPlaylist() {
-    //     //Khi click vao nut 3 cham ben ket qua nhac da tim kiem
-    //     $$('.ellipsis').forEach(() => {
+    addSongToPlaylist() {
+        // Tạo menu khi click vao o 3 cham
+        // const createEllipsisMenu = document.createElement('div');
+        // createEllipsisMenu.style.display = 'none';
+        // createEllipsisMenu.innerHTML = `
+        // <ul class="ellipsis-menu">
+        //     <li class="add-to-playlist"><i class="fa-solid fa-caret-left show-more-icon"></i> <p style="margin: 0 auto;">Add to playlist</p></li>
+        // </ul>`;
+        // document.body.appendChild(createEllipsisMenu);
+        $('.ellipsis-menu-container').style.display = 'none';
 
-    //     })
-    // },
+        //Khi click vao nut 3 cham ben ket qua nhac da tim kiem
+        $$('.ellipsis').forEach((ellipsis) => {
+            //Xu ly khi nguoi dung click chuot vao dau ba cham
+            ellipsis.addEventListener('click', (e) => {
+                $('.ellipsis-menu-container').classList.add('active-ellipsis-menu');
+                $('.ellipsis-menu-container').style.left = `${e.clientX - 190}px`;
+                $('.ellipsis-menu-container').style.top = `${e.clientY}px`;
+                $('.ellipsis-menu-container').style.display = 'block';
+            })
+
+            
+        })
+        //Khi nguoi dung click ra ben ngoai
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.ellipsis-menu') && !e.target.closest('.ellipsis') && !e.target.closest('.add-to-playlist-menu')) {
+                $('.ellipsis-menu-container').style.display = 'none';
+                $('.ellipsis-menu-container').classList.remove('active-ellipsis-menu');
+            }
+        })
+        
+
+
+        // Tạo phần tử menu cho danh sách playlist
+        // const createAddPlaylistMenu = document.createElement('div');
+        // createAddPlaylistMenu.classList.add('add-to-playlist-menu');
+        // createAddPlaylistMenu.innerHTML = `
+        //     <ul class="playlist-exist">
+            
+        //     </ul>
+        // `
+        // document.body.appendChild(createAddPlaylistMenu);
+
+        $('.add-to-playlist').addEventListener('mouseenter', async (e) => {
+            try {
+                const response = await fetch('/data/session')
+                if(response.ok) {
+                    const results = await response.json();
+                    const playlists = results.playlists
+     
+
+                    //Tao mot list playlist khi di chuot vao add to playlist
+
+                    const menuHTML = playlists.map((playlist) => {
+                        return `<li class="playlist" playlist-id="${playlist.playlist_id}">${playlist.playlist_name}</li>`;
+
+                    })
+                    $('.playlist-exist').innerHTML = menuHTML.join('');
+
+                    //tinh toan vi tri phan tu 
+                    const rect = $('.add-to-playlist').getBoundingClientRect()
+
+                    $('.add-to-playlist-menu').style.display = ('block');
+                    $('.add-to-playlist-menu').style.left = (`${rect.left - $('.add-to-playlist-menu').offsetWidth + 12}px`);
+                    $('.add-to-playlist-menu').style.top = (`${rect.top}px`);
+
+
+
+                    // Sự kiện để giữ menu mở khi di chuột vào menu hoặc phần tử kích hoạt
+                    document.addEventListener('mousemove', (event) => {
+                        if (!$('.add-to-playlist-menu').contains(event.target) && !$('.add-to-playlist').contains(event.target)) {
+                            $('.add-to-playlist-menu').style.display = 'none';
+                        }
+                    });
+                }
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        })
+
+    },
 
     start() {
         this.fetchAuthors(),
@@ -969,8 +1047,6 @@ var app = {
         
         this.searchSong()
 
-        $('.filter-active').style.color = '#000'
-        $('.filter-active').style.backgroundColor = '#fff'
     }
 }
 
