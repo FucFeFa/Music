@@ -890,7 +890,7 @@ var app = {
     searchSong() {
         const searchInput = $('input[type="text"]')
         console.log(searchInput)
-        searchInput.addEventListener('input', () => {
+        searchInput.addEventListener('keyup', () => {
             const searchText = searchInput.value.toLowerCase()
             //Kiem tra neu nguoi dung nhap dung dinh dang
             if(searchText.trim() !== ''){
