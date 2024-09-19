@@ -240,4 +240,16 @@ router.get('/search/:searchText', (req, res) => {
     })
 })
 
+//Them nhac vao playlist co san
+router.post('/song/:getSongId/addToPlaylist/:playlistId', (req, res) => {
+    const getSongId = req.params.getSongId
+    const playlistId = req.params.playlistId
+    db('playlist_songs')
+    .insert({ song_id: getSongId, playlist_id: playlistId })
+    .then(() => {
+        res.json({ message: `Song added to playlist ${playlistId}` })
+    })
+    .catch(err => console.error(err));
+})
+
 module.exports = router;

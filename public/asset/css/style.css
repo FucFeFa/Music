@@ -4,6 +4,7 @@ body {
     font-family: sans-serif;
     background-color: black;
     overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 #navigation {
@@ -348,6 +349,7 @@ input {
     border: 1px solid rgb(22 22 22);
     border-radius: 10px;
     overflow-y: overlay;
+    overflow-x: hidden;
     margin-left: 12px;
 }
 

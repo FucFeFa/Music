@@ -34,6 +34,8 @@ const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
 
+var getSongId = ''
+
 
 
 const yourPlaylist = $$('.your-playlists')
@@ -926,7 +928,7 @@ var app = {
                         `
                         data.map((song) => {
                             return songResultHtml += `
-                                <div class="song-item">
+                                <div class="song-item" song-id = "${song.song_id}">
                                     <img class="song-item-thumb" src="${song.song_thumb}" alt="">
                                     <div class="song-item-detail">
                                         <h3 class="song-item-title">${song.song_title}</h3>
@@ -967,6 +969,9 @@ var app = {
         $$('.ellipsis').forEach((ellipsis) => {
             //Xu ly khi nguoi dung click chuot vao dau ba cham
             ellipsis.addEventListener('click', (e) => {
+                const parentElement = e.target.parentElement;
+                getSongId = parentElement.getAttribute('song-id')
+                
                 $('.ellipsis-menu-container').classList.add('active-ellipsis-menu');
                 $('.ellipsis-menu-container').style.left = `${e.clientX - 190}px`;
                 $('.ellipsis-menu-container').style.top = `${e.clientY}px`;
@@ -1006,7 +1011,7 @@ var app = {
                     //Tao mot list playlist khi di chuot vao add to playlist
 
                     const menuHTML = playlists.map((playlist) => {
-                        return `<li class="playlist" playlist-id="${playlist.playlist_id}">${playlist.playlist_name}</li>`;
+                        return `<li class="playlist insert-to-playlist" playlist-id="${playlist.playlist_id}">${playlist.playlist_name}</li>`;
 
                     })
                     $('.playlist-exist').innerHTML = menuHTML.join('');
@@ -1027,6 +1032,23 @@ var app = {
                         }
                     });
                 }
+                
+                $$('.insert-to-playlist').forEach((playlist) => {
+                    playlist.addEventListener('click', (e) => {
+                        const playlistId = playlist.getAttribute('playlist-id');
+                        fetch(`/data/song/${getSongId}/addToPlaylist/${playlistId}}`, {
+                            method: 'POST',
+                        })
+                        .then((response) => response.json())
+                        .then((responseData) => {
+                            $('.add-to-playlist-menu').style.display = 'none';
+                            console.log(responseData)
+                        })
+                        .catch((error) => error.json())
+                    })
+                })
+
+                
             }
             catch (error) {
                 console.error('Error:', error);
