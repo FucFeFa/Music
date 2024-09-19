@@ -102,6 +102,8 @@ var app = {
             this.resetToInitialState()
             this.songClickEvent()
         })
+
+        this.interfaceHandler()
     },
 
     renderSongs() {
@@ -139,6 +141,8 @@ var app = {
             this.resetToInitialState()
             this.songClickEvent()
         })
+
+        this.interfaceHandler()
     },
 
     songClickEvent() {
@@ -432,6 +436,10 @@ var app = {
 
         truncateText(playlistTitle, 21)
         truncateText(playlistAbout, 21)
+
+        truncateText($$('.name'), 12)
+        truncateText($$('.insert-to-playlist'), 20)
+
 
         this.changeHeightContent()
 
@@ -1015,6 +1023,9 @@ var app = {
 
                     })
                     $('.playlist-exist').innerHTML = menuHTML.join('');
+
+                    // Hien thi dau 3 cham khi ki tu qua dai
+                    this.interfaceHandler()
 
                     //tinh toan vi tri phan tu 
                     const rect = $('.add-to-playlist').getBoundingClientRect()
