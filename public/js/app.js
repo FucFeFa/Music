@@ -1036,7 +1036,7 @@ var app = {
                 $$('.insert-to-playlist').forEach((playlist) => {
                     playlist.addEventListener('click', (e) => {
                         const playlistId = playlist.getAttribute('playlist-id');
-                        fetch(`/data/song/${getSongId}/addToPlaylist/${playlistId}}`, {
+                        fetch(`/data/song/${getSongId}/addToPlaylist/${playlistId}`, {
                             method: 'POST',
                         })
                         .then((response) => response.json())
