@@ -33,8 +33,11 @@ const repeatBtn = $('.btn-repeat')
 const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
+const volumeControl = $('.volume-control')
+const volumeIcon = $('.volume-icon')
 
 var getSongId = ''
+var currentVolume = 0
 
 
 
@@ -427,9 +430,7 @@ var app = {
 
                 if(text.length > length) {
                     element.textContent = text.slice(0, length) + '...'
-                    console.log('truncated text content')
                 } else {
-                    console.log('not truncated text content')
                 }
             })
         }
@@ -680,6 +681,7 @@ var app = {
         input.addEventListener('blur', () => {
             navSearch.classList.remove('nav-search-active')
         })
+
     },
 
     changeHeightContent() {
@@ -791,8 +793,6 @@ var app = {
         
         // Khi het thoi luong tu dong chuyen bai hat
         audio.onended = function() {
-            // console.log(_this.isRepeat)
-            // console.log(_this.currentIndex)
             if (_this.isRepeat) {
                 audio.play()
             } else if(_this.isRandom){
@@ -836,6 +836,47 @@ var app = {
         
             _this.loadCurrentSong(); // Tải bài hát hiện tại
             audio.play(); 
+        }
+
+
+        // Chinh volume
+        volumeControl.oninput = function(e) {
+            audio.volume = e.target.value
+            if(e.target.value > 0.5) {
+                volumeIcon.classList.remove('fa-volume-xmark')
+                volumeIcon.classList.remove('fa-volume-low')
+                volumeIcon.classList.remove('fa-volume-high')
+                volumeIcon.classList.add('fa-volume-high')
+            } else if (e.target.value <= 0.5 && e.target.value > 0) {
+                volumeIcon.classList.remove('fa-volume-high')
+                volumeIcon.classList.remove('fa-volume-xmark')
+                volumeIcon.classList.remove('fa-volume-low')
+                volumeIcon.classList.add('fa-volume-low')
+            } else {
+                volumeIcon.classList.remove('fa-volume-low')
+                volumeIcon.classList.remove('fa-volume-high')
+                volumeIcon.classList.remove('fa-volume-xmark')
+                volumeIcon.classList.add('fa-volume-xmark')
+            }
+        }
+
+        // Khi bam vao icon volumn
+        volumeIcon.onclick = function () {
+            if(!volumeIcon.classList.contains('fa-volume-xmark')){
+                currentVolume = volumeControl.value
+                audio.volume = 0
+                volumeControl.value = 0
+                volumeIcon.classList.add('fa-volume-xmark')
+            } else {
+                audio.volume = currentVolume
+                volumeIcon.classList.remove('fa-volume-xmark')
+                volumeControl.value = currentVolume
+                if(currentVolume > 0.5) {
+                    volumeIcon.classList.add('fa-volume-high')
+                } else {
+                    volumeIcon.classList.add('fa-volume-low')
+                }
+            }
         }
     },
 
@@ -963,14 +1004,6 @@ var app = {
     },
 
     addSongToPlaylist() {
-        // Tạo menu khi click vao o 3 cham
-        // const createEllipsisMenu = document.createElement('div');
-        // createEllipsisMenu.style.display = 'none';
-        // createEllipsisMenu.innerHTML = `
-        // <ul class="ellipsis-menu">
-        //     <li class="add-to-playlist"><i class="fa-solid fa-caret-left show-more-icon"></i> <p style="margin: 0 auto;">Add to playlist</p></li>
-        // </ul>`;
-        // document.body.appendChild(createEllipsisMenu);
         $('.ellipsis-menu-container').style.display = 'none';
 
         //Khi click vao nut 3 cham ben ket qua nhac da tim kiem
@@ -995,18 +1028,6 @@ var app = {
                 $('.ellipsis-menu-container').classList.remove('active-ellipsis-menu');
             }
         })
-        
-
-
-        // Tạo phần tử menu cho danh sách playlist
-        // const createAddPlaylistMenu = document.createElement('div');
-        // createAddPlaylistMenu.classList.add('add-to-playlist-menu');
-        // createAddPlaylistMenu.innerHTML = `
-        //     <ul class="playlist-exist">
-            
-        //     </ul>
-        // `
-        // document.body.appendChild(createAddPlaylistMenu);
 
         $('.add-to-playlist').addEventListener('mouseenter', async (e) => {
             try {
