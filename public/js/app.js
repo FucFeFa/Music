@@ -842,6 +842,7 @@ var app = {
         // Chinh volume
         volumeControl.oninput = function(e) {
             audio.volume = e.target.value
+            currentVolume = e.target.value
             if(e.target.value > 0.5) {
                 volumeIcon.classList.remove('fa-volume-xmark')
                 volumeIcon.classList.remove('fa-volume-low')
@@ -873,10 +874,14 @@ var app = {
                 volumeControl.value = currentVolume
                 if(currentVolume > 0.5) {
                     volumeIcon.classList.add('fa-volume-high')
-                } else {
+                } else if(currentVolume == 0){
+                    volumeIcon.classList.add('fa-volume-xmark')
+                }else {
                     volumeIcon.classList.add('fa-volume-low')
                 }
             }
+
+            console.log(currentVolume)
         }
     },
 

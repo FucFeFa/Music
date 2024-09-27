@@ -37,6 +37,10 @@ app.get('/account/signin',(req, res) => {
     res.sendFile(__dirname + '/public/signin.html')
 })
 
+app.get('/admin', (req, res) => {
+    res.sendFile(__dirname + '/public/admin.html')
+})
+
 app.listen(port, function() {
     console.log(`Server is running on http://localhost:${port}`);
 });

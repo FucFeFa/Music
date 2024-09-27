@@ -74,7 +74,12 @@ router.post('/signin', async (req, res) => {
 
         //Tra ve du lieu cung voi session nguoi dung
         req.session.user = user
-        res.status(200).json({ message: 'Success' });
+        req.session.user_username = username
+        if(username === 'admin') {
+            res.status(200).json({ message: 'Page for admin' });
+        } else {
+            res.status(200).json({ message: 'Success' });
+        }
     }
     catch (err) {
         console.error(err);
@@ -93,6 +98,15 @@ router.post('/logout', (req, res) => {
         res.clearCookie('connect.sid');
         res.status(200).json({ message: 'Success' });
     });
+});
+
+// Kiểm tra đăng nhập
+router.get('/check-auth', (req, res) => {
+    if(req.session.user_username === 'admin') {
+        res.status(200).json({ message: 'Success' });
+    } else {
+        res.status(401).json({ message: 'Not authenticated' });
+    }
 });
 
 module.exports = router;

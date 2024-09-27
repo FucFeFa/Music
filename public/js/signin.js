@@ -20,7 +20,12 @@ signinForm.addEventListener('submit', async function(e){
 
         if (response.ok) {
             const responseData = await response.text()
-            window.location.href = '/'
+            message = JSON.parse(responseData)
+            if(message.message === 'Page for admin'){
+                window.location.href = '/admin'
+            } else {
+                window.location.href = '/'
+            }
         } else {
             const errorText = await response.text()
             alert.innerHTML = JSON.parse(errorText).message
