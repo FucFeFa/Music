@@ -1,6 +1,34 @@
 const express = require('express');
 const db = require('../db');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const iconv = require('iconv-lite');
+
+// Hàm để tạo chuỗi ngẫu nhiên
+function generateRandomString(length) {
+    return Math.random().toString(36).substring(2, length + 2);
+}
+
+// Cau hinh multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if(file.mimetype.startsWith('image/'))
+            cb(null, path.join(__dirname, '../public/asset/img'))
+        else if(file.mimetype.startsWith('audio/')) {
+            cb(null, path.join(__dirname, '../public/asset/music'))
+        } else {
+            cb(new Error('Invalid file'), false)
+        }
+    },
+    filename: function (req, file, cb) {
+        const randomString = generateRandomString(8); // Tạo chuỗi ngẫu nhiên dài 8 ký tự
+        const ext = path.extname(file.originalname); // Lấy phần mở rộng của tệp
+        const withoutExt = path.basename(file.originalname, ext); // Lấy tên gốc mà không có phần mở rộng
+        const originalName = iconv.decode(Buffer.from(withoutExt, 'binary'), 'utf-8'); // Chuyển đổi thành UTF-8
+        cb(null, `${originalName}-${randomString}${ext}`); // Kết hợp tên gốc với chuỗi ngẫu nhiên và phần mở rộng
+    }
+});
 
 // Lấy danh sách tác giả
 router.get('/authors', (req, res) => {
@@ -251,5 +279,48 @@ router.post('/song/:getSongId/addToPlaylist/:playlistId', (req, res) => {
     })
     .catch(err => console.error(err));
 })
+
+// Tra ve tat ca artist
+router.get('/artist', (req, res) => {
+    db('authors')
+    .select('*')
+    .then((data) => {
+        res.json(data)
+    })
+})
+
+// Dinh nghia middleware multer
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 } // Giới hạn kích thước file là 50MB
+});
+
+// Them nhac vao csdl (admin)
+router.post('/addSong', upload.fields([{ name: 'thumb-file' }, { name: 'audio-file' }]), (req, res) => {
+    const { title, artist, genre } = req.body;
+
+    // Kiểm tra nếu không có file nào được tải lên
+    if (!req.files || !req.files['thumb-file'] || !req.files['audio-file']) {
+        return res.status(400).json({ message: 'Thiếu file tải lên' });
+    }
+
+    // Lưu đường dẫn tương đối
+    const thumb = `./asset/img/${req.files['thumb-file'][0].filename}`;
+    const audio = `./asset/music/${req.files['audio-file'][0].filename}`;
+
+    console.log(title, artist, genre, thumb, audio); // Debugging output
+
+    db('songs')
+        .insert({ song_title: title, author_id: artist, song_genre: genre, song_thumb: thumb, song_sound: audio })
+        .then(() => {
+            res.status(200).json({ message: 'Song added successfully' });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Error adding song', error: err.message });
+        });
+});
+
+
 
 module.exports = router;

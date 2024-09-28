@@ -32,7 +32,7 @@
         <div class="tab-content">
             <div class="tab-pane active">
                 <h2>Add Song</h2>
-                <form id="addSongForm">
+                <form id="addSongForm" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="title">Title:</label>
                         <input type="text" id="title" name="title" required>
@@ -42,9 +42,7 @@
                         <label for="artist">Artist:</label>
                         <input list="artists" id="artist" name="artist" required>
                         <datalist id="artists">
-                            <option value="artist 1">
-                            <option value="artist 2">
-                            <option value="artist 3">
+                            
                         </datalist>
                     </div>
 
@@ -55,18 +53,18 @@
 
                     <div class="form-group">
                         <label for="thumb">Thumbnail:</label>
-                        <input type="file">
+                        <input type="file" id="thumb" name="thumb-file" required accept="image/*">
                     </div>
 
                     <div class="form-group">
                         <label for="audio">Audio:</label>
-                        <input type="file" required>
+                        <input type="file" id="audio" name="audio-file" required accept="audio/*">
                     </div>
 
                     <div class="submit">
                         <button id="submit-btn" type="submit">Submit</button>
                     </div>
-                
+                </form>
             </div>
 
             <div class="tab-pane">

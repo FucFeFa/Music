@@ -718,6 +718,7 @@ var app = {
 
     playMusic() {
         const _this = this;
+        audio.volume = 0.5
         // Xu ly khi bam vao nut play
         playBtn.addEventListener('click', () => {
             if(_this.isPlaying) {
