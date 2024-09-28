@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/account/(.*)", "destination": "/account/$1" }
-  ]
-}
