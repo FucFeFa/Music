@@ -2,9 +2,28 @@
 
 const artist = $('#artist')
 const addSongForm = $('#addSongForm')
+const addArtistForm = $('#addArtistForm')
 const thumb = $('#thumb')
 const audio = $('#audio')
+
+const logout = $('#logout')
 const dataListOption = []
+
+// Log out
+logout.addEventListener('click', () =>{
+    fetch('account/logout',{
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(response => {
+        if(response.message === 'Success') {
+            window.location.href = '/account/signin'
+        } else {
+            console.error('Error logout:', response.message)
+        }
+    })
+    .catch(err => console.log(err))
+})
 
 
 // Lay du lieu tat ca artist
@@ -56,6 +75,36 @@ addSongForm.addEventListener('submit', async (e) => {
     }
     catch (err) {
         console.error('Error adding song:', err)
+        alert(err)
+        e.preventDefault()
+    }
+})
+
+// Them artist 
+addArtistForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    // Gui form
+    const formData = new FormData(addArtistForm)
+    
+    // Gui yeu cau toi server
+    try {
+        const response = await fetch('/data/addArtist', {
+            method: 'POST',
+            body: formData
+        })
+
+        if(response.ok) {
+            alert('Artist added successfully!')
+            addArtistForm.reset()
+        } else {
+            const errorText = await response.text()
+            alert(JSON.parse(errorText).message)
+            e.preventDefault()
+        }
+    }
+    catch (err) {
+        console.error('Error adding artist:', err)
         alert(err)
         e.preventDefault()
     }

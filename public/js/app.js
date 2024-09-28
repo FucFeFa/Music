@@ -126,6 +126,8 @@ var app = {
             this.resetToInitialState()
             this.songClickEvent()
         })
+
+        this.interfaceHandler()
     },
 
     renderPlaylistsRecommend(){
@@ -143,6 +145,7 @@ var app = {
         homeBtn.addEventListener('click', () =>{
             this.resetToInitialState()
             this.songClickEvent()
+            this.interfaceHandler()
         })
 
         this.interfaceHandler()

@@ -30,6 +30,24 @@ const storage = multer.diskStorage({
     }
 });
 
+// Cau hinh multer artist
+const storageArtist = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if(file.mimetype.startsWith('image/'))
+            cb(null, path.join(__dirname, '../public/asset/img/artist'))
+        else {
+            cb(new Error('Invalid file'), false)
+        }
+    },
+    filename: function (req, file, cb) {
+        const randomString = generateRandomString(8); // Tạo chuỗi ngẫu nhiên dài 8 ký tự
+        const ext = path.extname(file.originalname); // Lấy phần mở rộng của tệp
+        const withoutExt = path.basename(file.originalname, ext); // Lấy tên gốc mà không có phần mở rộng
+        const originalName = iconv.decode(Buffer.from(withoutExt, 'binary'), 'utf-8'); // Chuyển đổi thành UTF-8
+        cb(null, `${originalName}-${randomString}${ext}`); // Kết hợp tên gốc với chuỗi ngẫu nhiên và phần mở rộng
+    }
+});
+
 // Lấy danh sách tác giả
 router.get('/authors', (req, res) => {
     db('authors').select('*').limit(6)
@@ -318,6 +336,35 @@ router.post('/addSong', upload.fields([{ name: 'thumb-file' }, { name: 'audio-fi
         .catch(err => {
             console.error(err);
             res.status(500).json({ message: 'Error adding song', error: err.message });
+        });
+});
+
+
+// Dinh nghia middleware multer
+const uploadArtist = multer({ 
+    storage: storageArtist,
+    limits: { fileSize: 50 * 1024 * 1024 } // Giới hạn kích thước file là 50MB
+});
+
+// Them artist (admin)
+
+router.post('/addArtist', uploadArtist.single('avatar-file'), (req, res) => {
+    const { name } = req.body;
+
+    if (!req.file) {
+        return res.status(400).json({ message: 'Thiếu file tải lên' });
+    }
+
+    const avatarFile = `./asset/img/artist/${req.file.filename}`
+
+    db('authors')
+       .insert({ author_name: name, author_avatar:  avatarFile})
+       .then(() => {
+            res.status(200).json({ message: 'Artist added successfully' });
+        })
+       .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Error adding artist', error: err.message });
         });
 });
 
