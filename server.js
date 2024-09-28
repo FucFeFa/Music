@@ -2,6 +2,9 @@ const express = require('express');
 const session = require('express-session');
 const crypto = require('crypto');
 const secretKey = crypto.randomBytes(64).toString('hex');
+const cors = require('cors');
+
+
 
 const path = require('path');
 const app = express();
@@ -13,6 +16,8 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }  // Set secure to true for HTTPS only
 }))
+
+app.use(cors());
 
 // Import các router
 const authRoutes = require('./routes/authRoutes');
