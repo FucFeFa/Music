@@ -8,8 +8,8 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",  // Bắt tất cả các yêu cầu
-      "dest": "/server.js"  // Đích đến là server.js để xử lý
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ]
 }
