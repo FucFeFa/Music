@@ -2,9 +2,9 @@
   "version": 2,
   "services": [
     {
-      "id": "service-id",
-      "name": "My Node Service",
-      "type": "node",
+      "id": "85b6d56a-98a8-4fd7-b47f-ac6eec60ffde",
+      "name": "Music",
+      "type": "node", 
       "env": {
         "NODE_ENV": "production",
         "DB_HOST": "b4lr3cuwu2xbbrhlnsjz-mysql.services.clever-cloud.com",
@@ -12,7 +12,13 @@
         "DB_USER": "u9gohfxizwtceaug",
         "DB_PASSWORD": "4d0WvnpHNvnNcjrOSvA1",
         "DB_NAME": "b4lr3cuwu2xbbrhlnsjz",
-        "PORT": "3000"
+        "PORT": "3000",
+        "RAILWAY_PROJECT_NAME": "devoted-warmth",
+        "RAILWAY_ENVIRONMENT_NAME": "production",
+        "RAILWAY_SERVICE_NAME": "Music",
+        "RAILWAY_PROJECT_ID": "8a6ba1ba-a93c-4e4f-b39c-deee94912186",
+        "RAILWAY_ENVIRONMENT_ID": "b6b71bde-d872-4c52-9dc9-4356da712780",
+        "RAILWAY_SERVICE_ID": "85b6d56a-98a8-4fd7-b47f-ac6eec60ffde"
       },
       "build": {
         "command": "npm install"
