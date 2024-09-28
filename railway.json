@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "services": [
+    {
+      "id": "service-id",
+      "name": "My Node Service",
+      "type": "node",
+      "env": {
+        "NODE_ENV": "production",
+        "DB_HOST": "b4lr3cuwu2xbbrhlnsjz-mysql.services.clever-cloud.com",
+        "DB_PORT": "3306",
+        "DB_USER": "u9gohfxizwtceaug",
+        "DB_PASSWORD": "4d0WvnpHNvnNcjrOSvA1",
+        "DB_NAME": "b4lr3cuwu2xbbrhlnsjz",
+        "PORT": "3000"
+      },
+      "build": {
+        "command": "npm install"
+      },
+      "start": {
+        "command": "npm start"
+      },
+      "deploy": {
+        "branch": "main",
+        "pull_request": true
+      }
+    }
+  ]
+}
