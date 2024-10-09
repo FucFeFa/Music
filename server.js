@@ -40,6 +40,10 @@ app.get('/account/signin',(req, res) => {
     res.sendFile(__dirname + '/public/signin.html')
 })
 
+app.get('/account/passwordReset', (req, res) => {
+    res.sendFile(__dirname + '/public/passwordReset.html')
+})
+
 app.get('/admin', (req, res) => {
     res.sendFile(__dirname + '/public/admin.html')
 })

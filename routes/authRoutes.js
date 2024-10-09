@@ -14,7 +14,7 @@ router.post('/signup', async (req, res) => {
      
     if (user) {
         return res.status(400).json({ message: 'Username already exists' });
-     }
+    }
 
     if (password !== confirmPassword) {
         return res.status(400).json({ message: 'Passwords do not match' });
@@ -28,7 +28,7 @@ router.post('/signup', async (req, res) => {
     if (mail) {
         return res.status(400).json({ message: 'Email already exists' });
     }
-
+    
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -99,6 +99,36 @@ router.post('/logout', (req, res) => {
         res.status(200).json({ message: 'Success' });
     });
 });
+
+// Đổi mật khẩu'
+router.put('/resetPassword', async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body
+    
+    const checkUsername = await db('users').where( { user_username: username }).first()
+
+    if(!checkUsername) {
+        return res.status(400).json({ message: 'Username is not exists' });
+    }
+
+    const checkEmail = await db('users').where({ user_email: email, user_username: username }).first()
+
+    if(!checkEmail) {
+        return res.status(400).json({ message: 'Wrong email for this account' });
+    }
+
+    if(password !== confirmPassword) {
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    await db('users').where({ user_username: username }).update({ user_password: hashedPassword }).then(() => {
+        res.status(200).json({ message: 'Success' });
+    }).catch((err) => {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    });
+})
 
 // Kiểm tra đăng nhập
 router.get('/check-auth', (req, res) => {

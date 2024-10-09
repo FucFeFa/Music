@@ -54,7 +54,7 @@ addSongForm.addEventListener('submit', async (e) => {
         e.preventDefault()
     }
 
-    // Gui form
+    // Tao mot doi tuong form
     const formData = new FormData(addSongForm)
     
     // Gui yeu cau toi server
