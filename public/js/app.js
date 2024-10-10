@@ -245,6 +245,7 @@ var app = {
                     navUser.style.float = 'right'
                     userAvt.src = user.user_avatar
                     
+                    //Hien thi danh sach playlist
                     if (playlists.length > 0) {
                         playlistContent.style.display = 'none';
                     
@@ -951,6 +952,12 @@ var app = {
         const searchInput = $('input[type="text"]')
         console.log(searchInput)
         searchInput.addEventListener('keyup', () => {
+
+            // Xoa class active-playlist-playing neu tim kiem bai hat
+            if($('.recommend').classList.contains('active-playlist-playing')) {
+                $('.recommend').classList.remove('active-playlist-playing')
+            }
+
             const searchText = searchInput.value.toLowerCase()
             //Kiem tra neu nguoi dung nhap dung dinh dang
             if(searchText.trim() !== ''){
@@ -1076,6 +1083,7 @@ var app = {
                     });
                 }
                 
+                // Them nhac vao playlist
                 $$('.insert-to-playlist').forEach((playlist) => {
                     playlist.addEventListener('click', (e) => {
                         const playlistId = playlist.getAttribute('playlist-id');
@@ -1083,11 +1091,23 @@ var app = {
                             method: 'POST',
                         })
                         .then((response) => response.json())
-                        .then((responseData) => {
+                        .then(() => {
                             $('.add-to-playlist-menu').style.display = 'none';
-                            console.log(responseData)
+                            
+                            return fetch(`/data/playlist/getPlaylist/${playlistId}`)
                         })
-                        .catch((error) => error.json())
+                        .then((dataPlaylist) => dataPlaylist.json())
+                        .then((data) => {
+                            console.log(data);
+                            // Cap nhat lai giao dien playlist
+                            if(!data.playlist_thumb_custom && data.playlistSong.length > 0) {
+                                const thumbPlaylist = data.playlistSong[0].song_thumb
+                                console.log(thumbPlaylist)
+                                $(`.your-playlists[playlist-id="${data.playlist_id}"] img`).src = thumbPlaylist
+                                console.log($(`.your-playlists[playlist-id="${data.playlist_id}"]`).src)
+                            }
+                        })
+                        .catch((error) => console.error('Error:', error));
                     })
                 })
 
