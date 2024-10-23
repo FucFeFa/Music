@@ -20,6 +20,7 @@ app.use(session({
 // Import các router
 const authRoutes = require('./routes/authRoutes');
 const dataRoutes = require('./routes/dataRoutes');
+const favSongRoutes = require('./routes/favSongRoutes');
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -27,6 +28,7 @@ app.use(express.static('public'));
 // Sử dụng các router
 app.use('/account', authRoutes);
 app.use('/data', dataRoutes);
+app.use('/favorites', favSongRoutes);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));

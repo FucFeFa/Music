@@ -97,14 +97,20 @@ router.get('/session', async (req, res) => {
     if(req.session.user) {
         try{
             const user = req.session.user
+
             const playlists =  await db('playlists')
             .select('*')
-            // .innerJoin('playlist_songs', 'playlists.playlist_id', 'playlist_songs.playlist_id')
-            // .innerJoin('songs', 'playlist_songs.song_id', 'songs.song_id')
             .where({user_id: user.user_id})
+
+            const favorites = await db('favorites')
+            .select('*')
+            .where({user_id: user.user_id})
+            .orderBy('created_at', 'asc')
+
             res.json({
                 user, 
-                playlists
+                playlists,
+                favorites,
             });
         }
         catch(error){
