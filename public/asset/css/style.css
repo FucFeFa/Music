@@ -64,6 +64,7 @@ body {
 }
 
 #user-avt {
+    display: none;
     width: 36px;
     height: 36px;
     object-fit: cover;
@@ -605,6 +606,7 @@ h4, p {
 .song-playing-thumb {
     width: 56px;
     height: 56px;
+    object-fit: cover;
     margin: 8px;
     border-radius: 12px;
 }
@@ -839,6 +841,7 @@ th:nth-child(4), td:nth-child(4) {
 .playlist-playing-detail-title > img {
     width: 48px;
     height: 48px;
+    object-fit: cover;
     border-radius: 4px;
 }
 
@@ -900,6 +903,7 @@ th:nth-child(4), td:nth-child(4) {
 .top-result-detail > img {
     width: 100px;
     height: 100px;
+    object-fit: cover;
     border-radius: 7px;
 }
 
@@ -927,6 +931,7 @@ th:nth-child(4), td:nth-child(4) {
 .song-item-thumb {
     width: 40px;
     height: 40px;
+    object-fit: cover;
     border-radius: 4px;
 }
 

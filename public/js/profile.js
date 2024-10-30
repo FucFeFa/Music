@@ -30,6 +30,7 @@ const changePassword = async () => {
             } else {
                 const responseData = await response.text()
                 const text = JSON.parse(responseData)
+                $('#change-password-form .ok-message').style.display = 'none';
                 $('#change-password-form .error-message').style.display = 'block';
                 $('#change-password-form .error-message').innerHTML = text.message;
             }

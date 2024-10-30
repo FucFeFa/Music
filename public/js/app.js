@@ -221,6 +221,7 @@ var app = {
 
                     navUser.style.display = 'inline-block'
                     navUser.style.float = 'right'
+                    userAvt.style.display = 'block'
                     userAvt.src = user.user_avatar
                     
                     //Hien thi danh sach playlist
