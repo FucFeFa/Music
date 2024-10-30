@@ -1,0 +1,159 @@
+#profile-detail {
+    display: grid;
+    grid-template-columns: 198px 568px;
+    padding-bottom: 22px;
+    position: relative;
+}
+
+#avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+#profile-image {
+    width: 150px;
+    height: 150px;
+    margin-top: 22px;
+    margin-left: 22px;
+    border-radius: 12px;
+}
+
+#profile-image:hover {
+    cursor: pointer;
+}
+
+#avatar:hover {
+    opacity: 0.3;
+    cursor: pointer;
+}
+
+.choose-avatar {
+    display: none;
+    /* flex-direction: column;
+    align-items: center; */
+    text-align: center;
+    position: absolute;
+    left: 42px;
+    top: 77px;
+    font-weight: 700;
+}
+
+#avatar:hover ~ .choose-avatar {
+    display: block;
+    /* cursor: pointer; */
+}
+
+.profile-overview {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin-top: 91px;
+    margin-right: 21px;
+}
+
+.username {
+    margin: 0;
+    font-size: 56px;
+}
+
+#edit-profile {
+    /* height: 500px; */
+}
+
+.personal-information,
+.change-password {
+    display: flex;
+    padding-top: 50px;
+    padding-left: 100px;
+}
+
+.personal-information-title,
+.change-password-title {
+    width: 50%;
+}
+
+.personal-information-body,
+.change-password-body { 
+    width: 50%;
+    padding: 20px 8px 8px 8px;
+}
+
+.field-input {
+    position: relative;
+}
+
+.field-input span {
+    position: absolute;
+    font-size: 12px;
+    opacity: 0.6;
+    left: 10px;
+    top: 4px;
+}
+
+.field-input input {
+    width: 75%;
+    height: 22px;
+    padding: 22px 10px 10px 10px;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.field-input input:focus {
+    outline: 2px solid #fff;
+}
+
+.active-profile {
+    padding: 0;
+}
+
+#information,
+#change-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.profile-btn {
+    display: flex;
+    gap: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+    width: 37%;
+    height: 30px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.save-btn {
+    background-color: #d13639;
+}
+
+#edit-profile hr {
+    width: 80%;
+    margin-top: 50px;
+}
+
+.ok-message {
+    display: none;
+    color: #4caf50;
+}
+
+.error-message {
+    display: none;
+    color: #f3727f;
+}
+
+#file-upload {
+    display: none;
+}

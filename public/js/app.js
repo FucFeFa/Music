@@ -17,7 +17,7 @@ const recommendContainer = $('#recommend-container')
 const footer = $('#footer')
 const footerContainer = $('#footer-container')
 const navSearch = $('.nav-search');
-const input = $('input');
+const input = $('.nav-search input');
 const homeBtn = $('.nav-home')
 
 const songPlayingThumb = $('.song-playing-thumb')
@@ -364,7 +364,7 @@ var app = {
 
         // Xu ly khi nguoi dung click vào menu chuột phải
         document.addEventListener('click', (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             createPlaylistMenu.style.display = 'none';
             editPlaylistMenu.style.display = 'none';
             // if (!createPlaylistMenu.contains(e.target) && !editPlaylistMenu.contains(e.target)) {
@@ -400,14 +400,19 @@ var app = {
         
     },
 
-    getColorThumb() {
+    getColorThumb(thumb) {
         //Lay mau chu dao cua anh 
         const colorThief = new ColorThief();
-        const img = $('#thumb_song');
+        const img = thumb;
         img.onload = function() {
             const color = colorThief.getColor(img);
-            $('#playlist-playing-info').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
-            $('.playlist-playing-content').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
+            if($('.recommend').classList.contains('active-profile')){
+                $('#profile-detail').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
+                $('#edit-profile').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
+            } else {
+                $('#playlist-playing-info').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.8), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.6))`;
+                $('.playlist-playing-content').style.background = `linear-gradient(to bottom, rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5), rgb(${color[0]}, ${color[1]}, ${color[2]}, 0))`;
+            }
         }
     },
 
@@ -490,6 +495,7 @@ var app = {
                         $('.recommend').innerHTML = htmls
                         $('.recommend').classList.add('active-playlist-playing')
                         $('.recommend').classList.remove('active-favorite-playlist')
+                        $('.recommend').classList.remove('active-profile')
                         
 
                         //hien thi bai hat
@@ -533,7 +539,7 @@ var app = {
                             });
                         })
 
-                        app.getColorThumb()
+                        app.getColorThumb($('#thumb_song'))
 
                         //Khi click vao bai hat trong your playlist
                         const songs = $$('.songs-playlist')
@@ -985,8 +991,10 @@ var app = {
                         $('.recommend').innerHTML =  finalHtml
 
                         // Xoa class active-playlist-playing neu tim kiem bai hat
-                        if($('.recommend').classList.contains('active-playlist-playing')) {
+                        if($('.recommend').classList.contains('active-playlist-playing') || $('.recommend').classList.contains('active-profile') || $('.recommend').classList.contains('active-favorite-playlist')) {
                             $('.recommend').classList.remove('active-playlist-playing')
+                            $('.recommend').classList.remove('active-profile')
+                            $('.recommend').classList.remove('active-favorite-playlist')
                         }
                         
                         this.addSongToPlaylist()
@@ -1244,7 +1252,7 @@ var app = {
                     const playlistSong = data.playlistSong
 
                     const htmls = `
-                        <div id="playlist-playing">
+                <div id="playlist-playing">
                     <div id="playlist-playing-info">
                         <img id="thumb_song"  class="playlist-thumb-recommend" src="${playlistSong[0].song_thumb}" alt="">
                         <div class="playlist-playing-text">
@@ -1281,6 +1289,7 @@ var app = {
                     $('.recommend').innerHTML = htmls
                     $('.recommend').classList.add('active-favorite-playlist')
                     $('.recommend').classList.remove('active-playlist-playing')
+                    $('.recommend').classList.remove('active-profile')
 
                     //hien thi bai hat
                     const playlistSongHTML = playlistSong.map((song, index) => {
@@ -1324,7 +1333,7 @@ var app = {
                     })
 
                     // Lay mau chu dao
-                    app.getColorThumb()
+                    app.getColorThumb($('#thumb_song'))
 
                     //Khi click vao bai hat trong favorite playlist
                     const songs = $$('.songs-playlist')

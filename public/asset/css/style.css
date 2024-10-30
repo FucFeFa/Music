@@ -7,6 +7,11 @@ body {
     overflow-x: hidden;
 }
 
+#header {
+    position: relative;
+    z-index: 99;
+}
+
 #navigation {
     position: fixed;
     top: 0;
@@ -60,6 +65,8 @@ body {
 
 #user-avt {
     width: 36px;
+    height: 36px;
+    object-fit: cover;
     border-radius: 50%;
     margin-right: 8px;
     cursor: pointer;
@@ -335,6 +342,7 @@ input {
 
 .heart-btn {
     display: none;
+    color: #f5595c;
     position: relative;
     bottom:37px;
     left: 15px;
