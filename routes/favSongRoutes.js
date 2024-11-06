@@ -3,8 +3,8 @@ const db = require('../db');
 const router = express.Router();
 
 // Add song to favorites list
-router.post('/addToPlaylist/:userId/:songId', (req, res) => {
-    const userId = req.params.userId;
+router.post('/addToPlaylist/:songId', (req, res) => {
+    const userId = req.session.user.user_id;
     const songId = req.params.songId;
     db('favorites')
     .insert({ user_id: userId, song_id: songId })
@@ -15,8 +15,8 @@ router.post('/addToPlaylist/:userId/:songId', (req, res) => {
 })
 
 // Remove song from favorites list
-router.delete('/removeFromPlaylist/:userId/:songId', (req, res) => {
-    const userId = req.params.userId;
+router.delete('/removeFromPlaylist/:songId', (req, res) => {
+    const userId = req.session.user.user_id;
     const songId = req.params.songId;
     db('favorites')
     .where({ user_id: userId, song_id: songId })
@@ -27,9 +27,29 @@ router.delete('/removeFromPlaylist/:userId/:songId', (req, res) => {
     .catch(err => console.error(err));
 })
 
+// Update song rate
+router.put('/updateRating/:songId', async (req, res) => {
+    const songId = req.params.songId
+
+    // Counting the rating of Song
+    const userFavoriteSong = await db('favorites').where('song_id', songId).count('user_id as favorite_count').first()
+    const allUsers = await db('users').select('*').count('user_id as user_count').first()
+
+    // Calculate the average rating and update the song rate in the songs table
+    const favoriteCount = userFavoriteSong.favorite_count;
+    const userCount = allUsers.user_count;
+    const rating = Math.round( ((favoriteCount/userCount) * 10) * 100 ) / 100
+
+    await db('songs')
+    .where('song_id', songId)
+    .update({ song_rate: rating })
+
+    res.status(200).json({ rate: rating })
+})
+
 // Check if song is in favorites list
-router.get('/check/:userId/:songId', (req, res) => {
-    const userId = req.params.userId;
+router.get('/check/:songId', (req, res) => {
+    const userId = req.session.user.user_id;
     const songId = req.params.songId;
     db('favorites')
    .where({ user_id: userId, song_id: songId })

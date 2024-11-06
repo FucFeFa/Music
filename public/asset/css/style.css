@@ -545,6 +545,7 @@ h4, p {
     width: 150px;
     height: 150px;
     border-radius: 12px;
+    object-fit: cover;
 }
 
 .playlist-thumb {

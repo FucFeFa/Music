@@ -47,7 +47,7 @@ var app = {
     authors: [],
     songs: [],
     currentIndex: 0,
-    playlistsRecommend: [],
+    currentPlaylist: [],
     searchSuggestions: [],
     userInformation: {},
     currentPlaylistId: null,
@@ -71,8 +71,7 @@ var app = {
         try {
             const response = await fetch('/data/authors')
             const authors = await response.json()
-            this.authors = authors
-            this.renderAuthors()
+            this.renderAuthors(authors)
         }
         catch (error) {
             console.error('Error fetching authors:', error)
@@ -83,93 +82,96 @@ var app = {
         try {
             const response = await fetch('/data/songs')
             const songs = await response.json()
-            this.songs = songs
-            this.renderSongs()
+            this.renderSongs(songs)
         }
         catch (error) {
             console.error('Error fetching songs:', error)
         }
     },
 
-    async fetchPlaylistsRecommend() {
+    async fetchcurrentPlaylist() {
         try {
             const response = await fetch('/data/playlists')
             const playlists = await response.json()
-            this.playlists = playlists
-            this.renderPlaylistsRecommend()
+            console.log(playlists)
+            this.rendercurrentPlaylist(playlists)
         }
         catch (error) {
             console.error('Error fetching playlists:', error)
         }
     },
 
-    renderAuthors() {
-        const htmls = this.authors.map(author => `
+    renderAuthors(authors) {
+        const htmls = authors.map(author => `
                 <div class="artists">
                     <img class="artist-avt" src="${author.author_avatar}" alt="${author.author_name}">
                     <h3 class="name">${author.author_name}</h3>
                 </div>
             `)
-        artistContainer.innerHTML = htmls.join('')
-        //Xu ly khi nguoi dung click vao nut home
-        window.onload = this.saveInitialState()
-        homeBtn.addEventListener('click', () =>{
-            this.resetToInitialState()
-            this.songClickEvent()
-        })
+            $('.artist-container').innerHTML = htmls.join('')
+
+        // Luu trang thai ban dau
+        if(!$('.recommend').hasAttribute('data-initial-html') && $('.artists') && $('.songs') && $('.playlists'))
+        this.saveInitialState()
 
         this.interfaceHandler()
     },
 
-    renderSongs() {
-        const htmls = this.songs.map(song => `
+    renderSongs(songs) {
+        const htmls = songs.map(song => `
                 <div class="songs" song-id=${song.song_id} song-genre=${song.song_genre}>
                     <img class="song-thumb" src="${song.song_thumb}" alt="${song.song_title}">
                     <h3 class="name">${song.song_title}</h3>
                 </div>
             `)
-        songContainer.innerHTML = htmls.join('')
+            $('.song-container').innerHTML = htmls.join('')
 
-        this.songClickEvent()
+        this.songClickEvent($$('.songs'))
 
-        //Xu ly khi nguoi dung click vao nut home
-        window.onload = this.saveInitialState()
-        homeBtn.addEventListener('click', () =>{
-            this.resetToInitialState()
-            this.songClickEvent()
-        })
+        // Luu trang thai ban dau
+        if(!$('.recommend').hasAttribute('data-initial-html') && $('.artists') && $('.songs') && $('.playlists'))
+        this.saveInitialState()
 
         this.interfaceHandler()
     },
 
-    renderPlaylistsRecommend(){
-        const htmls = this.playlists.map(playlist => `
+    rendercurrentPlaylist(playlists){
+        const htmls = playlists.map(playlist => `
                 <div class="playlists">
                     <img class="playlist-thumb-recommend" src="${playlist.playlist_thumb}" alt="playlist 1">
                     <h3 class="name">${playlist.playlist_name}</h3>
                 </div>
             `)
-        playlistContainerRecommend.innerHTML = htmls.join('')
+            $('.playlist-container').innerHTML = htmls.join('')
         
-        
-        //Xu ly khi nguoi dung click vao nut home
-        window.onload = this.saveInitialState()
-        homeBtn.addEventListener('click', () =>{
-            this.resetToInitialState()
-            this.songClickEvent()
-            this.interfaceHandler()
-        })
+        // Luu trang thai ban dau
+        if(!$('.recommend').hasAttribute('data-initial-html') && $('.artists') && $('.songs') && $('.playlists'))
+        this.saveInitialState()
 
         this.interfaceHandler()
     },
 
-    songClickEvent() {
+    homeBtnClick() {
+        homeBtn.addEventListener('click', () =>{
+            this.resetToInitialState()
+
+            this.fetchAuthors()
+            this.fetchSongs()
+            this.fetchcurrentPlaylist()
+
+            this.songClickEvent($$('.songs'))
+            this.interfaceHandler()
+        })
+    },
+
+    songClickEvent(songElement) {
         //Xu ly khi nguoi dung click vao bai hat
-        const songs = $$('.songs')
+        const songs = songElement
         // console.log(songs)
         songs.forEach(song => {
             song.addEventListener('click', (e) => {
-                this.playlistsRecommend = []
+
+                this.currentPlaylist = []
                 // Hien thi bai hat khi click
                 const songId = song.getAttribute('song-id')
                 const songGenre = song.getAttribute('song-genre')
@@ -179,9 +181,6 @@ var app = {
                 this.songActive = true;
                 this.changeHeightContent();
 
-                // Them thuoc tinh song-id cho footer-container 
-                // $('#footer-container').setAttribute('song-id', `${songId}`)
-
                 // them bai hat vao play list hien tai
                 fetch(`/data/song/${songId}/genre/${songGenre}`)
                 .then((response) => {
@@ -189,7 +188,7 @@ var app = {
                 })
                 .then((data) => {
                     data.forEach(song => {
-                        this.playlistsRecommend.push(song)
+                        this.currentPlaylist.push(song)
                     })
 
                     this.currentIndex = 0
@@ -547,9 +546,9 @@ var app = {
                         
                         songs.forEach((song, index) => {
                             song.addEventListener('click', function() {
-                                app.playlistsRecommend=[]
+                                app.currentPlaylist=[]
                                 // const songId = song.getAttribute('song-id')
-                                // app.playlistsRecommend.push(song)
+                                // app.currentPlaylist.push(song)
                                 fetch(`/data/playlist/getSong/${playlistId}`)
                                     .then((response) => {
                                         return response.json()
@@ -558,10 +557,10 @@ var app = {
 
                                         data.forEach((item) => {
                                             // them bai hat vao play list hien tai
-                                            app.playlistsRecommend.push(item)
+                                            app.currentPlaylist.push(item)
                                         })
 
-                                        console.log(app.playlistsRecommend)
+                                        console.log(app.currentPlaylist)
 
 
                                         //hien thi dashboard va chinh lai chieu cao trang web
@@ -787,10 +786,10 @@ var app = {
             if (_this.isRepeat) {
                 audio.play()
             } else if(_this.isRandom){
-                const randomIndex = Math.floor(Math.random() * _this.playlistsRecommend.length)
+                const randomIndex = Math.floor(Math.random() * _this.currentPlaylist.length)
                 _this.currentIndex = randomIndex;
             } else {
-                if (_this.currentIndex >= _this.playlistsRecommend.length - 1) {
+                if (_this.currentIndex >= _this.currentPlaylist.length - 1) {
                     _this.currentIndex = 0; // Quay lại bài hát đầu tiên
                 }else {
                     _this.currentIndex++; // Tiến đến bài hát tiếp theo
@@ -803,9 +802,9 @@ var app = {
 
         //khi bam vao nut next
         nextBtn.onclick = function() {
-            // console.log(_this.playlistsRecommend.length)
+            // console.log(_this.currentPlaylist.length)
             console.log(_this.currentIndex)
-            if (_this.currentIndex >= _this.playlistsRecommend.length - 1) {
+            if (_this.currentIndex >= _this.currentPlaylist.length - 1) {
                 _this.currentIndex = 0; // Quay lại bài hát đầu tiên
             } else {
                 _this.currentIndex++; // Tiến đến bài hát tiếp theo
@@ -817,7 +816,7 @@ var app = {
 
         //khi bam vao nut backward
         prevBtn.onclick = function() {
-            // console.log(_this.playlistsRecommend.length)
+            // console.log(_this.currentPlaylist.length)
             console.log(_this.currentIndex)
             if (_this.currentIndex == 0) {
                 _this.currentIndex = 0; // Quay lại bài hát đầu tiên
@@ -907,12 +906,12 @@ var app = {
     },
 
     loadCurrentSong() {
-        $('#footer-container').setAttribute('song-id', app.playlistsRecommend[app.currentIndex].song_id)
-        app.checkSongFavorite(app.playlistsRecommend[app.currentIndex].song_id)
-        songPlayingThumb.src = app.playlistsRecommend[app.currentIndex].song_thumb
-        songPlayingName.textContent = app.playlistsRecommend[app.currentIndex].song_title
-        songPlayingArtist.textContent = app.playlistsRecommend[app.currentIndex].author_name
-        audio.src = app.playlistsRecommend[app.currentIndex].song_sound
+        $('#footer-container').setAttribute('song-id', app.currentPlaylist[app.currentIndex].song_id)
+        app.checkSongFavorite(app.currentPlaylist[app.currentIndex].song_id)
+        songPlayingThumb.src = app.currentPlaylist[app.currentIndex].song_thumb
+        songPlayingName.textContent = app.currentPlaylist[app.currentIndex].song_title
+        songPlayingArtist.textContent = app.currentPlaylist[app.currentIndex].author_name
+        audio.src = app.currentPlaylist[app.currentIndex].song_sound
     },
 
     // Khi bam vao nut home thi trang recommend reset lai ve ban dau
@@ -926,6 +925,8 @@ var app = {
     resetToInitialState() {
         const elements = $$('.recommend')
         $('.recommend').classList.remove('active-playlist-playing')
+        $('.recommend').classList.remove('active-profile')
+        $('.recommend').classList.remove('active-favorite-playlist')
         elements.forEach(element => {
             const initialHTML = element.getAttribute('data-initial-html')
             if(initialHTML !== null){
@@ -959,7 +960,7 @@ var app = {
                             <div class="result">
                                 <div class="top-result">
                                     <h2>Top result</h2>
-                                    <div class="top-result-detail">
+                                    <div class="top-result-detail" song-id = "${data[0].song_id}" song-genre="${data[0].song_genre}">
                                         <img src="${data[0].song_thumb}" alt="">
                                         <h1>${data[0].song_title}</h1>
                                         <p>Artist - ${data[0].author_name}</p>
@@ -977,7 +978,7 @@ var app = {
                         `
                         data.map((song) => {
                             return songResultHtml += `
-                                <div class="song-item" song-id = "${song.song_id}">
+                                <div class="song-item" song-id = "${song.song_id}" song-genre="${song.song_genre}">
                                     <img class="song-item-thumb" src="${song.song_thumb}" alt="">
                                     <div class="song-item-detail">
                                         <h3 class="song-item-title">${song.song_title}</h3>
@@ -999,6 +1000,8 @@ var app = {
                         }
                         
                         this.addSongToPlaylist()
+                        this.songClickEvent($$('.top-result-detail'))
+                        this.songClickEvent($$('.song-item'))
                     } else {
                         $('.recommend').innerHTML = `<div class="text-not-found">No result for "${searchText}"</div>`
                     }
@@ -1006,7 +1009,7 @@ var app = {
 
             } else {
                 this.resetToInitialState()
-                this.songClickEvent()
+                this.songClickEvent($$('.songs'))
                 this.interfaceHandler()
             }
         })
@@ -1020,6 +1023,9 @@ var app = {
         $$('.ellipsis').forEach((ellipsis) => {
             //Xu ly khi nguoi dung click chuot vao dau ba cham
             ellipsis.addEventListener('click', (e) => {
+
+                e.stopPropagation() // Khi click vao phan tu con se khong kich hoat phan tu cha
+
                 const parentElement = e.target.parentElement;
                 getSongId = parentElement.getAttribute('song-id')
                 
@@ -1117,18 +1123,8 @@ var app = {
         $('.bi-plus-circle').onclick = async () => {
             try {
                 const songId = $('#footer-container').getAttribute('song-id')
-                // Lay user id
-                await fetch('/data/session')
-                .then((response) => response.json())
-                .then((data) => {
-                    const userId = data.user.user_id
-                    return userId
-                })
-                // Them bai hat vao playlist yeu thich
-                .then(async (userId) => {
-                    return await fetch(`/favorites/addToPlaylist/${userId}/${songId}`, {
-                        method: 'POST',
-                    })
+                await fetch(`/favorites/addToPlaylist/${songId}`, {
+                    method: 'POST',
                 })
                 .then((response) => response.json())
                 .then((data) => {
@@ -1140,6 +1136,9 @@ var app = {
                     $('.bi-check-circle-fill').style.display = 'block'
                     this.displayFavoritePlaylist()
                     app.updateInterfacePlaylist()
+
+                    // Cap nhat rating song
+                    this.updateRateSong(songId)
                 })
                 .catch((error) => {
                     console.log('Error: ' + error)
@@ -1155,18 +1154,8 @@ var app = {
         $('.bi-check-circle-fill').onclick = async () => {
             try {
                 const songId = $('#footer-container').getAttribute('song-id')
-                // Lay user id
-                await fetch('/data/session')
-                .then((response) => response.json())
-                .then((data) => {
-                    const userId = data.user.user_id
-                    return userId
-                })
-                // Xoa bai hat khoi playlist yeu thich
-                .then(async (userId) => {
-                    return await fetch(`/favorites/removeFromPlaylist/${userId}/${songId}`, {
-                        method: 'DELETE',
-                    })
+                await fetch(`/favorites/removeFromPlaylist/${songId}`, {
+                    method: 'DELETE',
                 })
                 .then((response) => response.json())
                 .then((data) => {
@@ -1178,6 +1167,9 @@ var app = {
                     $('.bi-check-circle-fill').style.display = 'none'
                     this.displayFavoritePlaylist()
                     app.updateInterfacePlaylist()
+
+                    // Cap nhat rating song
+                    this.updateRateSong(songId)
                 })
             }
             catch (error) {
@@ -1189,17 +1181,8 @@ var app = {
     // Ham kiem tra xem bai hat dang duoc choi co phai la bai hat yeu thich khong
     async checkSongFavorite(songId) {
         try {
-            // Lay user id
-            await fetch('/data/session')
+            await fetch(`/favorites/check/${songId}`)
             .then((response) => response.json())
-            .then((data) => {
-                const userId = data.user.user_id
-                return userId
-            })
-            .then( async (userId) => {
-                const response = await fetch(`/favorites/check/${userId}/${songId}`)
-                return response.json()
-            })
             .then((response) => {
                 console.log(response)
                 if(response.message === 'favorite'){
@@ -1341,10 +1324,10 @@ var app = {
                     
                     songs.forEach((song, index) => {
                         song.addEventListener('click', function() {
-                            app.playlistsRecommend=[]
+                            app.currentPlaylist=[]
 
                             data.playlistSong.forEach((item) => {
-                                app.playlistsRecommend.push(item)
+                                app.currentPlaylist.push(item)
                             })
                             //hien thi dashboard va chinh lai chieu cao trang web
                             footer.style.display = 'block';
@@ -1386,23 +1369,47 @@ var app = {
         })
     },
 
+    // Ham cap nhat rate song
+    async updateRateSong(songId) {
+        try {
+            const response = await fetch(`/favorites/updateRating/${songId}`, {
+                method: 'PUT'
+            })
+
+            if(!response.ok) {
+                throw new Error('Failed to update rating')
+            }
+        } catch (error) {
+            console.error('Error updating rating:', error)
+        }
+    },
+
     start() {
         this.getUserInformation()
 
+        // Fetch main page
         this.fetchAuthors(),
         this.fetchSongs(),
-        this.fetchPlaylistsRecommend()
+        this.fetchcurrentPlaylist()
+
+        //Home button
+        this.homeBtnClick()
+
         this.interfaceHandler()
         this.eventHandler()
 
+        // Play music
         this.playMusic()
 
+        // Favorites
         this.addSongFavorite()
         this.removeSongFavorite()
         this.displayFavoritePlaylist()
         this.favoriteClickHandler()
         
+        // Search
         this.searchSong()
+
     }
 }
 
