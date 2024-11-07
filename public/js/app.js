@@ -205,78 +205,83 @@ var app = {
         
     },
 
+    // Hien thi danh sach playlist cua nguoi dung neu co
+    async loadPlaylists() {
+        try {
+            const response = await fetch('/data/session');
+            if (response.ok) {
+                const results = await response.json();
+                const user = results.user
+                const playlists = results.playlists
+                //Chinh lai thanh navigation
+                signIn.style.display = 'none'
+                signUp.style.display = 'none'
+
+                navUser.style.display = 'inline-block'
+                navUser.style.float = 'right'
+                userAvt.style.display = 'block'
+                userAvt.src = user.user_avatar
+                
+                //Hien thi danh sach playlist
+                if (playlists.length > 0) {
+                    playlistContent.style.display = 'none';
+                
+                    const htmls = await Promise.all(playlists.map(async (playlist) => {
+                        let playlistThumb = playlist.playlist_thumb;
+                
+                        // Nếu playlist không có ảnh tùy chỉnh, lấy từ bài hát đầu tiên
+                        if (!playlist.playlist_thumb_custom) {
+                            try {
+                                const response = await fetch(`data/playlist/getPlaylist/${playlist.playlist_id}`);
+                
+                                const data = await response.json();
+                
+                                // Kiểm tra nếu playlistSong tồn tại và có ít nhất 1 bài hát
+                                if (data.playlistSong && data.playlistSong.length > 0) {
+                                    playlistThumb = data.playlistSong[0].song_thumb;
+                                } else {
+                                    playlistThumb = playlist.playlist_thumb;
+                                }
+                
+                            } catch (error) {
+                                console.error('Lỗi khi lấy dữ liệu từ API:', error);
+                            }
+                        }
+                
+                        return `
+                            <div class="your-playlists" playlist-id="${playlist.playlist_id}">
+                                <div class="playlist-img">
+                                    <img class="playlist-thumb" src="${playlistThumb}" alt="">
+                                    <i class="fa-solid fa-play playlist-play-btn"></i>
+                                </div>
+                                <div class="playlist-info">
+                                    <p class="playlist-title">${playlist.playlist_name}</p>
+                                    <p class="playlist-about">Playlist - ${user.user_fullname}</p>
+                                </div>
+                            </div>
+                        `;
+                    }));
+                    // console.log(htmls.join(''))
+                    playlistContentContainer.innerHTML = htmls.join('')
+                    this.interfaceHandler()
+                    
+                    
+                }
+                this.createPlaylist(user)
+
+            } else {
+                // Xử lý khi người dùng không đăng nhập
+                alert('Please log in');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    },
+
     eventHandler() {
         //Giao dien cua nguoi da dang nhap
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/data/session');
-                if (response.ok) {
-                    const results = await response.json();
-                    const user = results.user
-                    const playlists = results.playlists
-                    //Chinh lai thanh navigation
-                    signIn.style.display = 'none'
-                    signUp.style.display = 'none'
-
-                    navUser.style.display = 'inline-block'
-                    navUser.style.float = 'right'
-                    userAvt.style.display = 'block'
-                    userAvt.src = user.user_avatar
-                    
-                    //Hien thi danh sach playlist
-                    if (playlists.length > 0) {
-                        playlistContent.style.display = 'none';
-                    
-                        const htmls = await Promise.all(playlists.map(async (playlist) => {
-                            let playlistThumb = playlist.playlist_thumb;
-                    
-                            // Nếu playlist không có ảnh tùy chỉnh, lấy từ bài hát đầu tiên
-                            if (!playlist.playlist_thumb_custom) {
-                                try {
-                                    const response = await fetch(`data/playlist/getPlaylist/${playlist.playlist_id}`);
-                    
-                                    const data = await response.json();
-                    
-                                    // Kiểm tra nếu playlistSong tồn tại và có ít nhất 1 bài hát
-                                    if (data.playlistSong && data.playlistSong.length > 0) {
-                                        playlistThumb = data.playlistSong[0].song_thumb;
-                                    } else {
-                                        playlistThumb = playlist.playlist_thumb;
-                                    }
-                    
-                                } catch (error) {
-                                    console.error('Lỗi khi lấy dữ liệu từ API:', error);
-                                }
-                            }
-                    
-                            return `
-                                <div class="your-playlists" playlist-id="${playlist.playlist_id}">
-                                    <div class="playlist-img">
-                                        <img class="playlist-thumb" src="${playlistThumb}" alt="">
-                                        <i class="fa-solid fa-play playlist-play-btn"></i>
-                                    </div>
-                                    <div class="playlist-info">
-                                        <p class="playlist-title">${playlist.playlist_name}</p>
-                                        <p class="playlist-about">Playlist - ${user.user_fullname}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }));
-                        // console.log(htmls.join(''))
-                        playlistContentContainer.innerHTML = htmls.join('')
-                        this.interfaceHandler()
-                        
-                        
-                    }
-                    this.createPlaylist(user)
-
-                } else {
-                    // Xử lý khi người dùng không đăng nhập
-                    alert('Please log in');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            app.loadPlaylists()
         });
         
         // Xử lý khi người dùng click vào avatar
@@ -416,249 +421,258 @@ var app = {
         }
     },
 
+    async displayYourPlaylist(playlistId) {
+        // Hien thi chi tiet playlist nguoi dung
+        await fetch(`/data/playlist/getPlaylist/${playlistId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if(!data.is_empty){
+                const playlistSong = data.playlistSong
+
+                const htmls = `
+                    <div id="playlist-playing" playlist-id="${playlistId}">
+                <div id="playlist-playing-info">
+                    <img id="thumb_song"  class="playlist-thumb-recommend" src="${playlistSong[0].song_thumb}" alt="">
+                    <div class="playlist-playing-text">
+                        <h1>${data.playlist_name}</h1>
+                        <p>${data.user_fullname} - ${playlistSong.length} songs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="playlist-playing-content">
+                <div class="playlist-playing-content-heading">
+                    <i class="fa-solid fa-play icon"></i>
+                </div>
+
+                <div class="playlist-playing-detail">
+                    <table>
+                        <thead class="table-title">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Date added</th>
+                                <th><i class="fa-regular fa-clock"></i></th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="playlist-playing-song">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                `
+                //Hien thi playlist
+                $('.recommend').innerHTML = htmls
+                $('.recommend').classList.add('active-playlist-playing')
+                $('.recommend').classList.remove('active-favorite-playlist')
+                $('.recommend').classList.remove('active-profile')
+                
+
+                //hien thi bai hat
+                const playlistSongHTML = playlistSong.map((song, index) => {
+                    return `
+                        <tr class="songs-playlist" song-id=${song.song_id}>
+                            <th>${index+1}</th>
+                            <th>
+                                <div class="playlist-playing-detail-title">
+                                    <img src="${song.song_thumb}" alt="">
+                                    <div>
+                                        <h4>${song.song_title}</h4>
+                                        <p>${song.author_name}</p>
+                                    </div>
+                                </div>
+                            </th>
+                            <th>
+                                4 hours ago
+                            </th>
+                            <th class="song-duration">
+                                
+                            </th>
+
+                            <th>
+                                <i class="fa-solid fa-trash remove"></i>
+                            </th>
+
+                            <audio class="audio-player" src="${song.song_sound}"></audio>
+                        </tr>
+                    `
+                })
+
+
+                $('.playlist-playing-song').innerHTML = playlistSongHTML.join('')
+
+                //Lay thoi luong cua moi bai hat
+                const audios = $$('.audio-player')
+                audios.forEach((audio, index) => {
+                    audio.addEventListener('loadedmetadata', function() {
+                        const duration = audio.duration;
+                        //Thoi luong bai hat
+                        var minutes = Math.floor(duration/60)
+                        var seconds = Math.floor((duration / 60 - minutes)*60)
+                        $$('.song-duration')[index].innerHTML = minutes.toString().padStart(2, '0')+':'+ seconds.toString().padStart(2, '0')
+                    });
+                })
+
+                app.getColorThumb($('#thumb_song'))
+
+                app.removeFromPlaylist()
+
+                //Khi click vao bai hat trong your playlist
+                const songs = $$('.songs-playlist')
+                
+                songs.forEach((song, index) => {
+                    song.addEventListener('click', function() {
+                        app.currentPlaylist=[]
+
+                        fetch(`/data/playlist/getSong/${playlistId}`)
+                            .then((response) => {
+                                return response.json()
+                            })
+                            .then((data) => {
+
+                                data.forEach((item) => {
+                                    // them bai hat vao play list hien tai
+                                    app.currentPlaylist.push(item)
+                                })
+
+                                console.log(app.currentPlaylist)
+
+
+                                //hien thi dashboard va chinh lai chieu cao trang web
+                                footer.style.display = 'block';
+                                app.songActive = true;
+                                app.changeHeightContent();
+
+                                //load bai hat
+                                app.currentIndex = index
+                                console.log(app.currentIndex)
+                                app.loadCurrentSong()
+                                app.isPlaying = true
+                                iconPause.style.display = 'block'
+                                iconPlay.style.display = 'none'
+                                audio.play()
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching song:', error);
+                            })
+                    })
+                })
+    
+                
+            } else {
+
+                const htmls = `
+                    <div id="playlist-playing">
+                <div id="playlist-playing-info">
+                    <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
+                    <div class="playlist-playing-text">
+                        <h1>${data.playlist_name}</h1>
+                        <p>${data.user_fullname} - 0 song</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="playlist-playing-content">
+                <div class="playlist-playing-content-heading">
+                    <i class="fa-solid fa-play icon"></i>
+                </div>
+
+                <div class="playlist-playing-detail">
+                    <table>
+                        <thead class="table-title">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Date added</th>
+                                <th><i class="fa-regular fa-clock"></i></th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="playlist-playing-song">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                `
+                //Hien thi playlist
+                $('.recommend').innerHTML = htmls
+
+                //hien thi bai hat
+                    playlistSongHTML =  `
+                        <tr>
+                            <th></th>
+                            <th>
+                                <div class="playlist-playing-detail-title">
+                                    
+                                    <div>
+                                        <h4></h4>
+                                        <p></p>
+                                    </div>
+                                </div>
+                            </th>
+                            <th>
+                                
+                            </th>
+                            <th class="song-duration">
+                                
+                            </th>
+
+                            <audio class="audio-player" src=""></audio>
+                        </tr>
+                    `
+                    $('.playlist-playing-song').innerHTML = playlistSongHTML
+
+                getColorThumb()
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    },
+
+    // Xu ly khi nguoi dung click vao playlists
+    loadYourPlaylist() {
+            
+        $$('.your-playlists').forEach((playlist) => {
+            playlist.addEventListener('click', () => {
+                // Hien thi thong tin playlist khi nguoi dung click vao
+                const playlistId = playlist.getAttribute('playlist-id')
+
+                app.displayYourPlaylist(playlistId)
+            })
+        })
+    },
+
+    truncateText(selector, length) {
+        const elements = selector
+        elements.forEach(element => {
+            const text = element.textContent
+
+            if(text.length > length) {
+                element.textContent = text.slice(0, length) + '...'
+            } else {
+            }
+        })
+    },
+
     interfaceHandler() {
         const playlistTitle = $$('.playlist-title')
         const playlistAbout = $$('.playlist-about')
 
-        function truncateText(selector, length) {
-            const elements = selector
-            elements.forEach(element => {
-                const text = element.textContent
+        
 
-                if(text.length > length) {
-                    element.textContent = text.slice(0, length) + '...'
-                } else {
-                }
-            })
-        }
+        this.truncateText(playlistTitle, 21)
+        this.truncateText(playlistAbout, 21)
 
-        truncateText(playlistTitle, 21)
-        truncateText(playlistAbout, 21)
-
-        truncateText($$('.name'), 12)
-        truncateText($$('.insert-to-playlist'), 20)
-
+        this.truncateText($$('.name'), 12)
+        this.truncateText($$('.insert-to-playlist'), 20)
 
         this.changeHeightContent()
-
-
-        // Xu ly khi nguoi dung click vao playlists
-        function loadYourPlaylist() {
-            
-            $$('.your-playlists').forEach((playlist) => {
-            playlist.addEventListener('click', () => {
-                // Hien thi thong tin playlist khi nguoi dung click vao
-                const playlistId = playlist.getAttribute('playlist-id')
-                // console.log(playlistId)
-                // Hien thi playlist khi nguoi dung click vao
-                fetch(`/data/playlist/getPlaylist/${playlistId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if(!data.is_empty){
-                        const playlistSong = data.playlistSong
-
-                        const htmls = `
-                            <div id="playlist-playing">
-                        <div id="playlist-playing-info">
-                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${playlistSong[0].song_thumb}" alt="">
-                            <div class="playlist-playing-text">
-                                <h1>${data.playlist_name}</h1>
-                                <p>${data.user_fullname} - ${playlistSong.length} songs</p>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="playlist-playing-content">
-                        <div class="playlist-playing-content-heading">
-                            <i class="fa-solid fa-play icon"></i>
-                        </div>
-    
-                        <div class="playlist-playing-detail">
-                            <table>
-                                <thead class="table-title">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Title</th>
-                                        <th>Date added</th>
-                                        <th><i class="fa-regular fa-clock"></i></th>
-                                    </tr>
-                                </thead>
-    
-                                <tbody class="playlist-playing-song">
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                        `
-                        //Hien thi playlist
-                        $('.recommend').innerHTML = htmls
-                        $('.recommend').classList.add('active-playlist-playing')
-                        $('.recommend').classList.remove('active-favorite-playlist')
-                        $('.recommend').classList.remove('active-profile')
-                        
-
-                        //hien thi bai hat
-                        const playlistSongHTML = playlistSong.map((song, index) => {
-                            return `
-                                <tr class="songs-playlist" song-id=${song.song_id}>
-                                    <th>${index+1}</th>
-                                    <th>
-                                        <div class="playlist-playing-detail-title">
-                                            <img src="${song.song_thumb}" alt="">
-                                            <div>
-                                                <h4>${song.song_title}</h4>
-                                                <p>${song.author_name}</p>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        4 hours ago
-                                    </th>
-                                    <th class="song-duration">
-                                        
-                                    </th>
-
-                                    <audio class="audio-player" src="${song.song_sound}"></audio>
-                                </tr>
-                            `
-                        })
-
-
-                        $('.playlist-playing-song').innerHTML = playlistSongHTML.join('')
-
-                        //Lay thoi luong cua moi bai hat
-                        const audios = $$('.audio-player')
-                        audios.forEach((audio, index) => {
-                            audio.addEventListener('loadedmetadata', function() {
-                                const duration = audio.duration;
-                                //Thoi luong bai hat
-                                var minutes = Math.floor(duration/60)
-                                var seconds = Math.floor((duration / 60 - minutes)*60)
-                                $$('.song-duration')[index].innerHTML = minutes.toString().padStart(2, '0')+':'+ seconds.toString().padStart(2, '0')
-                            });
-                        })
-
-                        app.getColorThumb($('#thumb_song'))
-
-                        //Khi click vao bai hat trong your playlist
-                        const songs = $$('.songs-playlist')
-                        
-                        songs.forEach((song, index) => {
-                            song.addEventListener('click', function() {
-                                app.currentPlaylist=[]
-                                // const songId = song.getAttribute('song-id')
-                                // app.currentPlaylist.push(song)
-                                fetch(`/data/playlist/getSong/${playlistId}`)
-                                    .then((response) => {
-                                        return response.json()
-                                    })
-                                    .then((data) => {
-
-                                        data.forEach((item) => {
-                                            // them bai hat vao play list hien tai
-                                            app.currentPlaylist.push(item)
-                                        })
-
-                                        console.log(app.currentPlaylist)
-
-
-                                        //hien thi dashboard va chinh lai chieu cao trang web
-                                        footer.style.display = 'block';
-                                        app.songActive = true;
-                                        app.changeHeightContent();
-
-                                        //load bai hat
-                                        app.currentIndex = index
-                                        console.log(app.currentIndex)
-                                        app.loadCurrentSong()
-                                        app.isPlaying = true
-                                        iconPause.style.display = 'block'
-                                        iconPlay.style.display = 'none'
-                                        audio.play()
-                                    })
-                                    .catch((error) => {
-                                        console.error('Error fetching song:', error);
-                                    })
-                            })
-                        })
-            
-                        
-                    } else {
-
-                        const htmls = `
-                            <div id="playlist-playing">
-                        <div id="playlist-playing-info">
-                            <img id="thumb_song"  class="playlist-thumb-recommend" src="${data.playlist_thumb}" alt="">
-                            <div class="playlist-playing-text">
-                                <h1>${data.playlist_name}</h1>
-                                <p>${data.user_fullname} - 0 song</p>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="playlist-playing-content">
-                        <div class="playlist-playing-content-heading">
-                            <i class="fa-solid fa-play icon"></i>
-                        </div>
-    
-                        <div class="playlist-playing-detail">
-                            <table>
-                                <thead class="table-title">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Title</th>
-                                        <th>Date added</th>
-                                        <th><i class="fa-regular fa-clock"></i></th>
-                                    </tr>
-                                </thead>
-    
-                                <tbody class="playlist-playing-song">
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                        `
-                        //Hien thi playlist
-                        $('.recommend').innerHTML = htmls
-
-                        //hien thi bai hat
-                            playlistSongHTML =  `
-                                <tr>
-                                    <th></th>
-                                    <th>
-                                        <div class="playlist-playing-detail-title">
-                                            
-                                            <div>
-                                                <h4></h4>
-                                                <p></p>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        
-                                    </th>
-                                    <th class="song-duration">
-                                        
-                                    </th>
-
-                                    <audio class="audio-player" src=""></audio>
-                                </tr>
-                            `
-                            $('.playlist-playing-song').innerHTML = playlistSongHTML
-
-                        getColorThumb()
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            })
-        })
-        }
         
-        loadYourPlaylist()
+        this.loadYourPlaylist()
         
         
 
@@ -1100,9 +1114,9 @@ var app = {
                             // Cap nhat lai giao dien playlist
                             if(!data.playlist_thumb_custom && data.playlistSong.length > 0) {
                                 const thumbPlaylist = data.playlistSong[0].song_thumb
-                                console.log(thumbPlaylist)
+
                                 $(`.your-playlists[playlist-id="${data.playlist_id}"] img`).src = thumbPlaylist
-                                console.log($(`.your-playlists[playlist-id="${data.playlist_id}"]`).src)
+
                             }
                         })
                         .catch((error) => console.error('Error:', error));
@@ -1116,6 +1130,34 @@ var app = {
             }
         })
 
+    },
+
+    // Xoa bai hat khoi playlist
+    removeFromPlaylist() {
+        $$('.remove').forEach((item) => {
+            item.addEventListener('click', async (e) => {
+                e.stopPropagation()
+                const parentElement = e.target.parentNode.parentNode
+
+                const songId = parentElement.getAttribute('song-id')
+
+                const playlistId = $('#playlist-playing').getAttribute('playlist-id')
+
+                try {
+                    const response = await fetch(`/data/playlist/deleteSong/${playlistId}/${songId}`, {
+                        method: 'DELETE',
+                    })
+    
+                    if(response.ok) {
+                        app.displayYourPlaylist(playlistId)
+                        app.loadPlaylists()
+                        console.log('success')
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            })
+        })
     },
 
     // Them bai hat vao playlist yeu thich
@@ -1400,6 +1442,9 @@ var app = {
 
         // Play music
         this.playMusic()
+
+        // Playlist
+        this.removeFromPlaylist()
 
         // Favorites
         this.addSongFavorite()

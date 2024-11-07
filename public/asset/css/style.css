@@ -762,6 +762,7 @@ h4, p {
 #playlist-playing-info > .playlist-thumb-recommend {
     margin-top: 22px;
     margin-left: 22px;
+    object-fit: cover;
 }
 
 .playlist-playing-content {

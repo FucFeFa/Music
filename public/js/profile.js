@@ -8,9 +8,8 @@ const changePassword = async () => {
         e.preventDefault()
         const formData = new FormData($('#change-password-form'))
         const data = Object.fromEntries(formData.entries())
-        const userId = app.userInformation.user.user_id
         try {
-            const response = await fetch(`/profile/changePassword/${userId}`, {
+            const response = await fetch(`/profile/changePassword`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -54,9 +53,9 @@ const updateInformation = () => {
         e.preventDefault()
         const formData = new FormData($('#information'))
         const data = Object.fromEntries(formData.entries())
-        const userId = app.userInformation.user.user_id
+
         try {
-            const response = await fetch(`/profile/updateInformation/${userId}`, {
+            const response = await fetch(`/profile/updateInformation`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -116,9 +115,8 @@ const changeAvatar = () => {
             const oldAvatar = oldAvatarPath.split('/').pop();
 
             if(file) {
-                const userId = app.userInformation.user.user_id
                 const formData = new FormData($('#upload-avatar-form'))
-                const response = await fetch(`/profile/${userId}/uploadAvatar/${oldAvatar}`, {
+                const response = await fetch(`/profile/uploadAvatar/${oldAvatar}`, {
                     method: 'PUT',
                     body: formData
                 })

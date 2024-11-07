@@ -50,7 +50,7 @@ const storageArtist = multer.diskStorage({
 
 // Lấy danh sách tác giả
 router.get('/authors', (req, res) => {
-    db('authors').select('*').limit(6)
+    db('authors').select('*').orderBy('author_rate', 'desc').limit(6)
     .then(authors => {
         res.json(authors);
     })
@@ -274,6 +274,19 @@ router.get('/playlist/getSong/:playlistId', (req, res) => {
     .then((data) => {
         res.json(data)
     })
+})
+
+// Xoa bai hat khoi playlist
+router.delete('/playlist/deleteSong/:playlistId/:songId', (req, res) => {
+    const songId = req.params.songId
+    const playlistId = req.params.playlistId;
+    db('playlist_songs')
+    .where({song_id: songId, playlist_id: playlistId})
+    .del()
+    .then(() => {
+        res.status(200).json({ message: `Song deleted from playlist` })
+    })
+    .catch(err => console.error(err));
 })
 
 

@@ -8,8 +8,8 @@ const iconv = require('iconv-lite');
 const fs = require('fs');
 
 // Doi mat khau
-router.put('/changePassword/:userId', async (req, res) => {
-    const userId = req.params.userId;
+router.put('/changePassword', async (req, res) => {
+    const userId = req.session.user.user_id;
     const { current_password, new_password, confirm_password } = req.body;
 
     try {
@@ -45,8 +45,8 @@ router.put('/changePassword/:userId', async (req, res) => {
 })
 
 // Cap nhat thong tin ca nhan
-router.put('/updateInformation/:userId', async (req, res) => {
-    const userId = req.params.userId;
+router.put('/updateInformation', async (req, res) => {
+    const userId = req.session.user_id;
     const { fullname, email, phone } = req.body;
 
     try {
@@ -94,8 +94,8 @@ const upload = multer({
 });
 
 // Thay doi avatar trong csdl
-router.put('/:userId/uploadAvatar/:oldAvatar', upload.fields([{ name: 'change_avatar' }]), async (req, res) => {
-    const userId = req.params.userId;
+router.put('/uploadAvatar/:oldAvatar', upload.fields([{ name: 'change_avatar' }]), async (req, res) => {
+    const userId = req.session.user.user_id;
     const oldAvatar = req.params.oldAvatar;
     const filePath = path.join(__dirname, '../public/asset/img/user', oldAvatar);
 
