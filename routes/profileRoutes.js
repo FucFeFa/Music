@@ -46,7 +46,7 @@ router.put('/changePassword', async (req, res) => {
 
 // Cap nhat thong tin ca nhan
 router.put('/updateInformation', async (req, res) => {
-    const userId = req.session.user_id;
+    const userId = req.session.user.user_id;
     const { fullname, email, phone } = req.body;
 
     try {

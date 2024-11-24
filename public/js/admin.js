@@ -27,7 +27,8 @@ logout.addEventListener('click', () =>{
 
 
 // Lay du lieu tat ca artist
-fetch('/data/artist')
+const getArtists = function() {
+    fetch('/data/artist')
    .then(response => response.json())
    .then(data => {
        console.log(data)
@@ -41,7 +42,9 @@ fetch('/data/artist')
     .catch(error => {
         console.error('Error:', error);
     });
+}
 
+getArtists();
 
 // Submit form
 addSongForm.addEventListener('submit', async (e) => {
@@ -96,6 +99,7 @@ addArtistForm.addEventListener('submit', async (e) => {
 
         if(response.ok) {
             alert('Artist added successfully!')
+            getArtists();
             addArtistForm.reset()
         } else {
             const errorText = await response.text()

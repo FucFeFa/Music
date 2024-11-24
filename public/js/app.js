@@ -39,9 +39,7 @@ const volumeIcon = $('.volume-icon')
 var getSongId = ''
 var currentVolume = 0
 
-
-
-const yourPlaylist = $$('.your-playlists')
+let timeOutMessage;
 
 var app = {
     authors: [],
@@ -213,6 +211,7 @@ var app = {
                 const results = await response.json();
                 const user = results.user
                 const playlists = results.playlists
+
                 //Chinh lai thanh navigation
                 signIn.style.display = 'none'
                 signUp.style.display = 'none'
@@ -266,8 +265,10 @@ var app = {
                     this.interfaceHandler()
                     
                     
+                } else {
+                    if($('.favorite-playlist').classList.contains('empty'))
+                    playlistContent.style.display = 'block';
                 }
-                this.createPlaylist(user)
 
             } else {
                 // Xử lý khi người dùng không đăng nhập
@@ -282,6 +283,7 @@ var app = {
         //Giao dien cua nguoi da dang nhap
         document.addEventListener('DOMContentLoaded', async () => {
             app.loadPlaylists()
+            app.createPlaylist()
         });
         
         // Xử lý khi người dùng click vào avatar
@@ -369,15 +371,12 @@ var app = {
 
         // Xu ly khi nguoi dung click vào menu chuột phải
         document.addEventListener('click', (e) => {
-            // e.preventDefault();
             createPlaylistMenu.style.display = 'none';
             editPlaylistMenu.style.display = 'none';
-            // if (!createPlaylistMenu.contains(e.target) && !editPlaylistMenu.contains(e.target)) {
-            // }
         })
 
+        // Xoa playlist
         $('.delete-playlist').addEventListener('click', (e) => {
-            // const playlistDeleteId = this.closest('.your-playlist')
             const playlistDeleteId = app.currentPlaylistId
 
             fetch(`/data/playlist/delete/${playlistDeleteId}`,{
@@ -385,9 +384,11 @@ var app = {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 removePlaylistFromUI(data.playlistDeletedId)
+                app.loadPlaylists()
+                this.showMessage(data.message)
 
+                app.resetToInitialState() // quay ve trang chinh
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -888,34 +889,39 @@ var app = {
         }
     },
 
-    createPlaylist(user) {
+    createPlaylist() {
         // Xu ly khi click vao nut create playlist
-        const createPlaylistBtn = $('.create-playlist-list')
-        createPlaylistBtn.addEventListener('click', (e) => {
-            fetch(`/data/session/${user.user_id}/playlist`,{
-                method: 'POST',
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // console.log(data);
-                playlistContent.style.display = 'none'
-                const newPlaylist = `
-                    <div class="your-playlists" playlist-id="${data.playlist_id}">
-                        <div class="playlist-img">
-                            <img class="playlist-thumb" src="${data.playlist_thumb}" alt="">
-                            <i class="fa-solid fa-play playlist-play-btn"></i>
-                        </div>
-                        <div class="playlist-info">
-                            <p class="playlist-title">${data.playlist_name}</p>
-                            <p class="playlist-about">Playlist - ${user.user_fullname}</p>
-                        </div>
-                    </div>`;
-                
-                playlistContentContainer.innerHTML += newPlaylist;
-                this.interfaceHandler()
+        const createPlaylist = $$('.create-playlist-list, .create-playlist-btn')
 
-             })
-             .catch((error) => console.error('Error:', error));
+        createPlaylist.forEach((btn) => {
+
+            btn.addEventListener('click', (e) => {
+                fetch(`/data/create/playlist`,{
+                    method: 'POST',
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    // console.log(data);
+                    playlistContent.style.display = 'none'
+                    const newPlaylist = `
+                        <div class="your-playlists" playlist-id="${data.playlist_id}">
+                            <div class="playlist-img">
+                                <img class="playlist-thumb" src="${data.playlist_thumb}" alt="">
+                                <i class="fa-solid fa-play playlist-play-btn"></i>
+                            </div>
+                            <div class="playlist-info">
+                                <p class="playlist-title">${data.playlist_name}</p>
+                                <p class="playlist-about">Playlist - ${data.user_fullname}</p>
+                            </div>
+                        </div>`;
+                    
+                    playlistContentContainer.innerHTML += newPlaylist;
+                    this.interfaceHandler()
+                    this.showMessage(data.message)
+    
+                 })
+                 .catch((error) => console.error('Error:', error));
+            })
         })
     },
 
@@ -950,7 +956,65 @@ var app = {
         $('input[type="text"]').value = ''
     },
 
-    searchSong() {
+    // Ham khi click vao nut all
+    showAllSearch() {
+        $('.all').addEventListener('click', () => {
+            // Neu chua co class active filter
+            if(!$('.all').classList.contains('filter-active')) {
+                // Them class active filter
+                $('.all').classList.add('filter-active')
+
+                // Xoa class active filter cho nhung cai muc khac
+                $('.song-filter').classList.remove('filter-active')
+            }
+
+            $('.result').style.display = 'flex'
+            $('.songs-filter').style.display = 'none'
+
+        })
+    },
+
+    // Hien thi tat ca bai hat da tim kiem
+    showAllSongsSearch(searchText) {
+        $('.song-filter').addEventListener('click', async () => {
+            // Neu chua co class active filter
+            if(!$('.song-filter').classList.contains('filter-active')) {
+                // Them class active filter
+                $('.song-filter').classList.add('filter-active')
+
+                // Xoa class active filter cho nhung cai muc khac
+                $('.all').classList.remove('filter-active')
+            }
+
+            $('.result').style.display = 'none'
+            $('.songs-filter').style.display = 'block'
+
+            // Neu da co class active filter thi se hien thi tat ca bai hat da tim kiem
+            const response = await fetch(`/data/search/${searchText}/filterBySongs`)
+            const data = await response.json()
+            
+            const htmls = data.map((song) => {
+                return `
+                    <div class="song-item" song-id = "${song.song_id}" song-genre="${song.song_genre}">
+                        <img class="song-item-thumb" src="${song.song_thumb}" alt="">
+                        <div class="song-item-detail">
+                            <h3 class="song-item-title">${song.song_title}</h3>
+                            <p class="song-item-artist">${song.author_name}</p>
+                        </div>
+                        <i class="fa-solid fa-ellipsis ellipsis"></i>
+                    </div>
+                `
+            })
+            
+
+            $('.songs-filter').innerHTML =  htmls.join('')
+            this.addSongToPlaylist()
+            this.songClickEvent($$('.song-item'))
+        })
+    },
+
+    // Tim kiem
+    search() {
         const searchInput = $('input[type="text"]')
         // console.log(searchInput)
         searchInput.addEventListener('keyup', () => {
@@ -969,6 +1033,11 @@ var app = {
                         const topResultHtml = `
                             <div class="filter">
                                 <span class="all filter-active">All</span>
+                                <span class="song-filter">Songs</span>
+                            </div>
+
+                            <div class="songs-filter">
+
                             </div>
     
                             <div class="result">
@@ -1016,6 +1085,10 @@ var app = {
                         this.addSongToPlaylist()
                         this.songClickEvent($$('.top-result-detail'))
                         this.songClickEvent($$('.song-item'))
+
+                        // cac muc filter
+                        this.showAllSearch()
+                        this.showAllSongsSearch(searchText)
                     } else {
                         $('.recommend').innerHTML = `<div class="text-not-found">No result for "${searchText}"</div>`
                     }
@@ -1105,18 +1178,19 @@ var app = {
                         .then((response) => response.json())
                         .then(() => {
                             $('.add-to-playlist-menu').style.display = 'none';
-                            
+
                             return fetch(`/data/playlist/getPlaylist/${playlistId}`)
                         })
                         .then((dataPlaylist) => dataPlaylist.json())
                         .then((data) => {
                             console.log(data);
+                            this.showMessage(`Song added to playlist ` + data.playlist_name)
                             // Cap nhat lai giao dien playlist
                             if(!data.playlist_thumb_custom && data.playlistSong.length > 0) {
                                 const thumbPlaylist = data.playlistSong[0].song_thumb
 
                                 $(`.your-playlists[playlist-id="${data.playlist_id}"] img`).src = thumbPlaylist
-
+                               
                             }
                         })
                         .catch((error) => console.error('Error:', error));
@@ -1149,9 +1223,10 @@ var app = {
                     })
     
                     if(response.ok) {
+                        const data = response.json()
                         app.displayYourPlaylist(playlistId)
                         app.loadPlaylists()
-                        console.log('success')
+                        this.showMessage('Song deleted successfully')
                     }
                 } catch (error) {
                     console.error('Error:', error);
@@ -1171,7 +1246,7 @@ var app = {
                 .then((response) => response.json())
                 .then((data) => {
                     // In ra message thanh cong----------------------------------------------------------------------------
-                    console.log(data.message)
+                    this.showMessage(data.message)
 
                     // thay doi icon
                     $('.bi-plus-circle').style.display = 'none'
@@ -1202,7 +1277,7 @@ var app = {
                 .then((response) => response.json())
                 .then((data) => {
                     // In ra message thanh cong----------------------------------------------------------------------------
-                    console.log(data.message)
+                    this.showMessage(data.message)
 
                     // thay doi icon
                     $('.bi-plus-circle').style.display = 'block'
@@ -1251,11 +1326,23 @@ var app = {
             const favoriteSong = await response.json()
             console.log(favoriteSong)
             if(data.favorites.length > 0) {
+                $('.favorite-playlist').classList.remove('empty')
+                
+                playlistContent.style.display = 'none';
+
                 $('.favorite-playlist .playlist-thumb').src = favoriteSong.playlistSong[0].song_thumb
                 $('.favorite-playlist .playlist-about').innerHTML = `Favorite - ${data.user.user_fullname}`
                 $('.favorite-playlist').style.display = 'block'
+
             } else {
                 $('.favorite-playlist').style.display = 'none'
+                $('.favorite-playlist').classList.add('empty')
+                
+                // Neu khong co playlist nao thi hien thi create playlist
+                app.loadPlaylists()
+                if(!$('.your-playlists')) {
+                    playlistContent.style.display = 'block';
+                }
             }
             
             
@@ -1334,8 +1421,13 @@ var app = {
                                 <th>
                                     4 hours ago
                                 </th>
+                                
                                 <th class="song-duration">
                                     
+                                </th>
+
+                                <th>
+                                    <i class="fa-solid fa-trash unlike"></i>
                                 </th>
 
                                 <audio class="audio-player" src="${song.song_sound}"></audio>
@@ -1426,6 +1518,28 @@ var app = {
         }
     },
 
+    // Ham hien thi thong bao
+    showMessage(message) {
+        // An thong bao truoc do
+        if(timeOutMessage){
+            clearTimeout(timeOutMessage)
+            $('#message').style.display = 'none'
+
+            // Dat lai animation
+            $('#message').style.animation = 'none';
+            void $('#message').offsetWidth;
+            $('#message').style.animation = 'display 0.3s linear';
+        }
+
+        // Hien thi thong bao moi
+        $('.message-text').innerHTML = message
+        $('#message').style.display = 'block'
+        timeOutMessage = setTimeout(() => {
+            $('#message').style.display = 'none'
+        }, 3000)
+        
+    },
+
     start() {
         this.getUserInformation()
 
@@ -1453,8 +1567,9 @@ var app = {
         this.favoriteClickHandler()
         
         // Search
-        this.searchSong()
+        this.search()
 
+        
     }
 }
 

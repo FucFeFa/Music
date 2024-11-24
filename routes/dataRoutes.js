@@ -144,6 +144,7 @@ router.get('/song/:songId/genre/:songGenre', (req, res) => {
        .select('*')
        .where('song_genre', songGenre)
        .join('authors', 'songs.author_id', 'authors.author_id')
+       .orderBy('song_rate', 'desc')
        .then(songs => {
             const clickSongIndex = songs.findIndex(song => song.song_id == songId)
 
@@ -159,32 +160,41 @@ router.get('/song/:songId/genre/:songGenre', (req, res) => {
 })
 
 // Tao mot playlist moi
-router.post('/session/:user_id/playlist', (req, res) => {
-    const user_id = req.params.user_id;
-    
+router.post('/create/playlist', (req, res) => {
+    const user_id = req.session.user.user_id;
+
     db('playlists')
-       .where( {user_id} )
-       .count('user_id as total')
-       .then(result => {
-            const playlist_name = `My Playlist #${result[0].total + 1}`
-            const playlist_thumb = `./asset/img/default_playlist_thumb.jpg`
-            // Tao play list moi
+        .where({ user_id })
+        .count('user_id as total')
+        .then(result => {
+            const playlist_name = `My Playlist #${result[0].total + 1}`;
+            const playlist_thumb = `./asset/img/default_playlist_thumb.jpg`;
+            
+            // Tao playlist moi
             return db('playlists')
                 .insert({ playlist_name, user_id })
                 .returning('id')
                 .then(id => {
-                        res.json({
-                            "playlist_id": id[0],
-                            "playlist_name": playlist_name,
-                            "playlist_thumb": playlist_thumb
+                    return db('users')
+                        .where({ user_id })
+                        .select('user_fullname')
+                        .first()
+                        .then(user => {
+                            res.json({
+                                "user_id": user_id,
+                                "playlist_id": id[0],
+                                "playlist_name": playlist_name,
+                                "playlist_thumb": playlist_thumb,
+                                "user_fullname": user.user_fullname,
+                                message: 'Add to your library'
+                            });
                         });
-                    })
+                })
                 .catch(err => console.error(err));
-       })
-       .catch(err => console.error(err));
-
-       
+        })
+        .catch(err => console.error(err));
 });
+
 
 // Xoa playlist
 router.delete('/playlist/delete/:playlistDeleteId', (req, res) => {
@@ -300,6 +310,19 @@ router.get('/search/:searchText', (req, res) => {
     .orWhere('authors.author_name', 'like', `%${searchText}%`)
     .orderBy('songs.song_rate', 'desc')
     .limit(4)
+    .then((data) => {
+        res.json(data)
+    })
+})
+
+// Loc tat ca bai hat tim kiem
+router.get('/search/:searchText/filterBySongs', (req, res) => {
+    const searchText = req.params.searchText
+    db('songs')
+    .select('*', 'authors.author_name')
+    .innerJoin('authors','songs.author_id', 'authors.author_id')
+    .where('songs.song_title', 'like', `%${searchText}%`)
+    .orderBy('songs.song_rate', 'desc')
     .then((data) => {
         res.json(data)
     })

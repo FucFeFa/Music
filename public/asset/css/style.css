@@ -552,6 +552,7 @@ h4, p {
     width: 48px;
     height: 48px;
     border-radius: 7px;
+    object-fit: cover;
 }
 
 .playlist-thumb-recommend {
@@ -859,11 +860,23 @@ th:nth-child(4), td:nth-child(4) {
     opacity: 0.7;
 }
 
-.all {
+.filter {
+    display: flex;
+    gap: 8px;
+}
+
+.songs-filter {
+    display: none;
+    padding: 20px 20px;
+}
+
+.all,
+.song-filter {
     background-color: #5c5c5c;
     padding: 6px 13px;
     font-size: 15px;
     border-radius: 9999px;
+    cursor: pointer;
 }
 
 .filter-active {
@@ -986,4 +999,34 @@ th:nth-child(4), td:nth-child(4) {
 
 .volume .progress {
     width: 30%;
+}
+
+#message {
+    display: none;
+    position: absolute;
+    z-index: 999;
+    top: 66px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    color: black;
+    padding: 16px;
+    border-radius: 9px;
+    animation: display 0.3s linear;
+}
+
+.message-text {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+@keyframes display {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }
